@@ -1,0 +1,8 @@
+# python venv
+*env*
+
+# firebase serviceAccountKey
+serviceAccountKey.json
+
+# __pycache__
+__pycache__
