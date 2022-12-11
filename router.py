@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body
 
 from enums import Routes
 
-from datatypes import Payload
+from payload import Payload
 from utilities import getShopKey
 
 router = APIRouter()
@@ -35,6 +35,16 @@ async def finishOrder(payload: Payload.FinishOrder):
 @router.post('/complete')
 async def completeOrder(payload: Payload.CompleteOrder):
     return await Routes.post.CompleteOrder(payload)
+
+
+@router.post('/update-storage')
+async def updateStorage():
+    return await Routes.post.UpdateStorage()
+
+@router.post('/update-product')
+async def updateProdct(payload: Payload.updateProduct):
+    print('update-product')
+    return await Routes.post.UpdateProduct(payload)
 
 
 # ------------ AUTH ------------------------------------------------

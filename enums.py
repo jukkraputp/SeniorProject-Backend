@@ -14,3 +14,5 @@ class Routes(makeobj.Obj):
         AddOrder = post.addOrder
         FinishOrder = post.finishOrder
         CompleteOrder = post.completeOrder
+        UpdateStorage = post.updateStorage
+        UpdateProduct = post.updateProduct

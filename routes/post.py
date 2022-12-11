@@ -1,7 +1,8 @@
 from datetime import datetime
 from firebase_admin import db, firestore
+from _firebase import storage_bucket
 
-from datatypes import Payload
+from payload import Payload
 
 
 async def auth(payload: Payload.Auth):
@@ -28,6 +29,7 @@ async def addOrder(payload: Payload.Order):
         }
     return res
 
+
 async def finishOrder(payload: Payload.FinishOrder):
     ref = db.reference(f'Order/{payload.shopKey}/order{payload.orderId}')
     ref.update({
@@ -36,6 +38,7 @@ async def finishOrder(payload: Payload.FinishOrder):
     return {
         'message': 'Success'
     }
+
 
 async def completeOrder(payload: Payload.CompleteOrder):
     ref = db.reference(f'Order/{payload.shopKey}/order{payload.orderId}')
@@ -54,3 +57,23 @@ async def completeOrder(payload: Payload.CompleteOrder):
         }
     except Exception as e:
         raise e
+
+
+async def updateStorage():
+    storage_bucket.location = '/shop1/Food1'
+    return storage_bucket.location_type
+
+
+async def updateProduct(payload: Payload.updateProduct):
+    print(payload)
+    fs: firestore.firestore.Client = firestore.client()
+    try:
+        fs.collection(u'Menu').document(
+            payload.shop_key).collection(payload.type).document(payload.id).set({
+                "name": payload.product.name,
+                "price": payload.product.price
+            })
+    except Exception as e:
+        print(e)
+        return e
+    return True
