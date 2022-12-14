@@ -38,15 +38,20 @@ async def completeOrder(payload: Payload.CompleteOrder):
 
 
 @router.post('/update-storage')
-async def updateStorage():
+async def updateStorage(payload: Payload.UpdateStorage):
     return await Routes.post.UpdateStorage()
 
+
 @router.post('/update-product')
-async def updateProdct(payload: Payload.updateProduct):
+async def updateProdct(payload: Payload.UpdateProduct):
     print('update-product')
     return await Routes.post.UpdateProduct(payload)
 
 
+@router.post('/register')
+async def register(payload: Payload.Register):
+    print('register')
+    return await Routes.post.Register(payload)
 # ------------ AUTH ------------------------------------------------
 
 

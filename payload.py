@@ -25,11 +25,15 @@ class Payload(makeobj.Obj):
         shopKey: str
         orderId: str
 
-    class updateStorage(BaseModel):
-        imgBytes: str
+    class UpdateStorage(BaseModel):
+        item: datatypes.Item
 
-    class updateProduct(BaseModel):
+    class UpdateProduct(BaseModel):
         shop_key: str
         type: str
         id: str
         product: datatypes.Product
+
+    class Register(BaseModel):
+        username: str
+        password: str

@@ -64,16 +64,28 @@ async def updateStorage():
     return storage_bucket.location_type
 
 
-async def updateProduct(payload: Payload.updateProduct):
+async def updateProduct(payload: Payload.UpdateProduct):
     print(payload)
     fs: firestore.firestore.Client = firestore.client()
     try:
-        fs.collection(u'Menu').document(
-            payload.shop_key).collection(payload.type).document(payload.id).set({
-                "name": payload.product.name,
-                "price": payload.product.price
-            })
+        if payload.product.delete:
+            fs.collection(u'Menu').document(
+                payload.shop_key).collection(payload.type).document(payload.id).delete()
+        else:
+            fs.collection(u'Menu').document(
+                payload.shop_key).collection(payload.type).document(payload.id).set({
+                    "name": payload.product.name,
+                    "price": payload.product.price
+                })
+
     except Exception as e:
         print(e)
         return e
     return True
+
+
+''' async def register(payload: Payload.Register):
+    fs: firestore.firestore.Client = firestore.client()
+    try:
+        fs.collection(u'Register')
+    return True '''
