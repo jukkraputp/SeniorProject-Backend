@@ -8,6 +8,7 @@ class Routes(makeobj.Obj):
 
     class get(Enum):
         Home = get.home
+        GenerateToken = get.generateToken
 
     class post(Enum):
         Auth = post.auth

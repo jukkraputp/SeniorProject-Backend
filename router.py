@@ -14,6 +14,10 @@ router = APIRouter()
 async def root():
     return await Routes.get.Home()
 
+@router.get('/generate-token')
+async def generateToken():
+    return await Routes.get.GenerateToken()
+
 # ------------- POST ----------------------------------------------
 
 
