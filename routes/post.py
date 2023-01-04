@@ -1,8 +1,11 @@
 from datetime import datetime
 from firebase_admin import db, firestore
-from _firebase import storage_bucket
-
+from _firebase import storage_bucket, firebase_auth
 from payload import Payload
+import uuid
+import logging
+from fastapi import HTTPException
+from utilities import generateOTP
 
 
 async def auth(payload: Payload.Auth):
@@ -84,8 +87,38 @@ async def updateProduct(payload: Payload.UpdateProduct):
     return True
 
 
-''' async def register(payload: Payload.Register):
+async def register(payload: Payload.Register):
     fs: firestore.firestore.Client = firestore.client()
     try:
         fs.collection(u'Register')
-    return True '''
+    except Exception as e:
+        print(e)
+    return True
+
+
+async def generateToken(payload: Payload.GenerateToken):
+    # print(payload)
+    uid = uuid.uuid4().__str__()
+    # print(uid)
+    fs: firestore.firestore.Client = firestore.client()
+    token = firebase_auth.create_custom_token(uid).decode('utf-8')
+    # print(f'token: {token}')
+    otp = generateOTP()
+    # print('try')
+    try:
+        # print('setting otp')
+        fs.collection('OTP').document(otp).set({
+            'token': token
+        })
+        # print('otp has been set')
+        # print('setting token')
+        fs.collection('TokenList').document(token).set({
+            "key": payload.key,
+            "mode": payload.mode
+        })
+        # print('token has been set')
+        return otp
+    except Exception as e:
+        logging.error(f'error {e}')
+        raise HTTPException(
+            status_code=404, detail='error has occur in setting token process')

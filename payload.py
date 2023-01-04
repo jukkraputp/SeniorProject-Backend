@@ -37,3 +37,7 @@ class Payload(makeobj.Obj):
     class Register(BaseModel):
         username: str
         password: str
+
+    class GenerateToken(BaseModel):
+        key: str
+        mode: str

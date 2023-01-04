@@ -14,9 +14,9 @@ router = APIRouter()
 async def root():
     return await Routes.get.Home()
 
-@router.get('/generate-token')
-async def generateToken():
-    return await Routes.get.GenerateToken()
+@router.get('/check-token/')
+async def checkToken(token: str):
+    return await Routes.get.CheckToken(token)
 
 # ------------- POST ----------------------------------------------
 
@@ -56,6 +56,12 @@ async def updateProdct(payload: Payload.UpdateProduct):
 async def register(payload: Payload.Register):
     print('register')
     return await Routes.post.Register(payload)
+
+@router.post('/generate-token')
+async def generateToken(payload: Payload.GenerateToken):
+    return await Routes.post.GenerateToken(payload)
+
+
 # ------------ AUTH ------------------------------------------------
 
 

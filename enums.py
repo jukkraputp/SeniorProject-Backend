@@ -8,7 +8,7 @@ class Routes(makeobj.Obj):
 
     class get(Enum):
         Home = get.home
-        GenerateToken = get.generateToken
+        CheckToken = get.checkToken
 
     class post(Enum):
         Auth = post.auth
@@ -18,3 +18,4 @@ class Routes(makeobj.Obj):
         UpdateStorage = post.updateStorage
         UpdateProduct = post.updateProduct
         Register = post.register
+        GenerateToken = post.generateToken
