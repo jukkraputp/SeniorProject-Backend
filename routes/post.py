@@ -118,6 +118,11 @@ async def generateToken(payload: Payload.GenerateToken):
             "mode": payload.mode
         })
         # print('token has been set')
+        doc = fs.collection('Manager').document(payload.uid).get()
+        if doc.exists:
+            data = doc._data
+            data[payload.mode] = otp
+            fs.collection('Manager').document(payload.uid).set(data)
         return {
             'OTP': otp
         }

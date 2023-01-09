@@ -41,6 +41,7 @@ class Payload(makeobj.Obj):
     class GenerateToken(BaseModel):
         key: str
         mode: str
+        uid: str
 
     class ClearToken(BaseModel):
         secret: str
