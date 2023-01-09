@@ -125,3 +125,36 @@ async def generateToken(payload: Payload.GenerateToken):
         logging.error(f'error {e}')
         raise HTTPException(
             status_code=404, detail='error has occur in setting token process')
+
+
+async def clearToken(payload: Payload.ClearToken):
+    fs: firestore.firestore.Client = firestore.client()
+
+    if payload.secret == 'my_secret_1234':
+
+        docs = fs.collection('OTP').list_documents()
+        for doc in docs:
+            print(f"Deleting doc {doc.id} => {doc.get().to_dict()}")
+            doc.delete()
+
+        docs = fs.collection('TokenList').list_documents()
+        for doc in docs:
+            print(f"Deleting doc {doc.id} => {doc.get().to_dict()}")
+            doc.delete()
+
+        docs = fs.collection('Manager').list_documents()
+        for doc in docs:
+            dic: dict = doc.get().to_dict()
+            if dic.__contains__('Reception'):
+                dic.pop('Reception')
+            if dic.__contains__('Chef'):
+                dic.pop('Chef')
+            doc.set(dic)
+
+        return {
+            'message': True
+        }
+
+    return {
+        'message': 'secret not match.'
+    }

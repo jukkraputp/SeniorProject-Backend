@@ -61,6 +61,10 @@ async def register(payload: Payload.Register):
 async def generateToken(payload: Payload.GenerateToken):
     return await Routes.post.GenerateToken(payload)
 
+@router.post('/clear-token')
+async def clearToken(payload: Payload.ClearToken):
+    return await Routes.post.ClearToken(payload)
+
 
 # ------------ AUTH ------------------------------------------------
 

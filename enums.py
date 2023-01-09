@@ -19,3 +19,4 @@ class Routes(makeobj.Obj):
         UpdateProduct = post.updateProduct
         Register = post.register
         GenerateToken = post.generateToken
+        ClearToken = post.clearToken
