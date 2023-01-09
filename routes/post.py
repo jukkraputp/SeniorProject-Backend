@@ -6,6 +6,7 @@ import uuid
 import logging
 from fastapi import HTTPException
 from utilities import generateOTP
+import json
 
 
 async def auth(payload: Payload.Auth):
@@ -117,7 +118,9 @@ async def generateToken(payload: Payload.GenerateToken):
             "mode": payload.mode
         })
         # print('token has been set')
-        return otp
+        return {
+            'OTP': otp
+        }
     except Exception as e:
         logging.error(f'error {e}')
         raise HTTPException(
