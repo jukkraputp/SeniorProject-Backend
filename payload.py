@@ -44,3 +44,4 @@ class Payload(makeobj.Obj):
 
     class ClearToken(BaseModel):
         secret: str
+        username: str

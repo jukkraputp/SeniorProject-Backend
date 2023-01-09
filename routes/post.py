@@ -142,14 +142,15 @@ async def clearToken(payload: Payload.ClearToken):
             print(f"Deleting doc {doc.id} => {doc.get().to_dict()}")
             doc.delete()
 
-        docs = fs.collection('Manager').list_documents()
+        docs = fs.collection('Manager').where(
+            'name', '==', payload.username).get()
         for doc in docs:
-            dic: dict = doc.get().to_dict()
+            dic: dict = doc._data
             if dic.__contains__('Reception'):
                 dic.pop('Reception')
             if dic.__contains__('Chef'):
                 dic.pop('Chef')
-            doc.set(dic)
+            fs.collection('Manager').document(doc.id).set(dic)
 
         return {
             'message': True
