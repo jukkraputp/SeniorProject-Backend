@@ -97,12 +97,13 @@ async def register(payload: Payload.Register):
             fs.collection(u'Manager').document(f'{user.uid}').create({
                 'name': payload.username,
             })
+            return True
         except Exception as e:
             print('register2::', e)
+            return False
     except Exception as e:
         print('register1::', e)
-
-    return True
+        return False
 
 
 async def generateToken(payload: Payload.GenerateToken):
