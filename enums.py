@@ -6,17 +6,17 @@ from routes import get, post
 
 class Routes(makeobj.Obj):
 
-    class get(Enum):
-        Home = get.home
-        CheckToken = get.checkToken
+    class get():
+        Home = staticmethod(get.home)
+        CheckToken = staticmethod(get.checkToken)
 
-    class post(Enum):
-        Auth = post.auth
-        AddOrder = post.addOrder
-        FinishOrder = post.finishOrder
-        CompleteOrder = post.completeOrder
-        UpdateStorage = post.updateStorage
-        UpdateProduct = post.updateProduct
-        Register = post.register
-        GenerateToken = post.generateToken
-        ClearToken = post.clearToken
+    class post():
+        Auth = staticmethod(post.auth)
+        AddOrder = staticmethod(post.addOrder)
+        FinishOrder = staticmethod(post.finishOrder)
+        CompleteOrder = staticmethod(post.completeOrder)
+        UpdateStorage = staticmethod(post.updateStorage)
+        UpdateProduct = staticmethod(post.updateProduct)
+        Register = staticmethod(post.register)
+        GenerateToken = staticmethod(post.generateToken)
+        ClearToken = staticmethod(post.clearToken)

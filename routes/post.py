@@ -91,9 +91,17 @@ async def updateProduct(payload: Payload.UpdateProduct):
 async def register(payload: Payload.Register):
     fs: firestore.firestore.Client = firestore.client()
     try:
-        fs.collection(u'Register')
+        user: firebase_auth.UserRecord = firebase_auth.create_user(
+            email=f'{payload.username}@gmail.com', password=payload.password)
+        try:
+            fs.collection(u'Manager').document(f'{user.uid}').create({
+                'name': payload.username,
+            })
+        except Exception as e:
+            print('register2::', e)
     except Exception as e:
-        print(e)
+        print('register1::', e)
+
     return True
 
 

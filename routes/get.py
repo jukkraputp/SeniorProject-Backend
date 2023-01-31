@@ -8,8 +8,8 @@ import jwt
 from utilities import createJWT
 
 
-async def home():
-    return "Hello! This is API server."
+async def home(text: str):
+    return f"Hello {text}! This is API server."
 
 
 async def checkToken(token: str):

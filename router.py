@@ -11,8 +11,8 @@ router = APIRouter()
 
 
 @router.get('/')
-async def root():
-    return await Routes.get.Home()
+async def root(param: str):
+    return await Routes.get.Home(param)
 
 @router.get('/check-token/')
 async def checkToken(token: str):
