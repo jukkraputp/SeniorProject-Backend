@@ -3,7 +3,6 @@ import makeobj
 from pydantic import BaseModel
 import datatypes
 
-
 class Payload(makeobj.Obj):
 
     class Auth(BaseModel):
@@ -38,6 +37,7 @@ class Payload(makeobj.Obj):
         username: str
         # email: str
         password: str
+        mode: str
 
     class GenerateToken(BaseModel):
         key: str

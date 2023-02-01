@@ -13,7 +13,7 @@ router = APIRouter()
 @router.get('/')
 async def root(param: str):
     return await Routes.get.Home(param)
-
+    
 @router.get('/check-token/')
 async def checkToken(token: str):
     return await Routes.get.CheckToken(token)

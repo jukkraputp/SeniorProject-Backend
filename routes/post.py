@@ -89,12 +89,14 @@ async def updateProduct(payload: Payload.UpdateProduct):
 
 
 async def register(payload: Payload.Register):
+    if payload.mode != 'Register' and payload.mode != 'Customer':
+        return False
     fs: firestore.firestore.Client = firestore.client()
     try:
         user: firebase_auth.UserRecord = firebase_auth.create_user(
             email=f'{payload.username}@gmail.com', password=payload.password)
         try:
-            fs.collection(u'Manager').document(f'{user.uid}').create({
+            fs.collection(payload.mode).document(f'{user.uid}').create({
                 'name': payload.username,
             })
             return True
