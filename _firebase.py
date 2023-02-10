@@ -12,7 +12,7 @@ firebase_admin.initialize_app(cred, {
 
 
 # As an admin, the app has access to read and write all data, regardless of Security Rules
-realtime_database: db
+realtime_database = db
 firebase_firestore = firestore.client()
 firebase_auth = auth
 storage_bucket = storage.bucket()

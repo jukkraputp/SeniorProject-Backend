@@ -70,7 +70,6 @@ async def clearToken(payload: Payload.ClearToken):
 
 
 def authorize(shopName: str, shopKey: str):
-    key = getShopKey(shopName)
     return True
     if key == shopKey:
         return True

@@ -5,7 +5,7 @@ from payload import Payload
 import uuid
 import logging
 from fastapi import HTTPException
-from utilities import generateOTP
+from utilities import generateOTP, getShopKey
 import json
 
 
@@ -15,13 +15,27 @@ async def auth(payload: Payload.Auth):
 
 
 async def addOrder(payload: Payload.Order):
-    print(payload)
+    shopKey: str = getShopKey(payload.shopName, payload.phoneNumber)
+    today = f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}'
+    idRef = db.reference(f'OrderId/{shopKey}/{today}')
+    idData = idRef.get()
+    if idData is not None:
+        print(f'idData: {idData}, type: {type(idData)}')
+        idDic = dict(idData)
+        orderId: int = int(idDic['orderId'])
+        idRef.set({
+            'orderId': orderId + 1
+        })
+    else:
+        orderId = 1
+        idRef.set({
+            'orderId': 2
+        })
     ref = db.reference(
-        f'Order/{payload.shopKey}').child(f'order{payload.orderId}')
+        f'Order/{shopKey}').child(f'order{orderId}')
     dic = payload.dict()
-    dic.pop('shopKey')
-    dic['date'] = payload.date.isoformat()
-    dic['isFinished'] = False
+    dic.pop('shopName')
+    dic['date'] = payload.date
     if not ref.get():
         ref.set(dic)
         res = {

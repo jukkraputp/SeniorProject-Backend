@@ -10,11 +10,11 @@ class Payload(makeobj.Obj):
         password: str
 
     class Order(BaseModel):
-        shopKey: str
-        orderId: str
-        date: datetime
-        totalAmount: float
-        foods: dict
+        shopName: str
+        phoneNumber: str
+        itemList: list
+        cost: float
+        date: str
 
     class FinishOrder(BaseModel):
         shopKey: str

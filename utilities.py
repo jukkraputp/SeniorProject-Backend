@@ -1,10 +1,15 @@
 from firebase_admin import firestore
 import jwt
 import math, random
+import json
 
-def getShopKey(shopName: str):
+f = open('secret.json')
+data = json.load(f)
+jwt_key = data['jwt_key']
+
+def getShopKey(shopName: str, phoneNumber: str):
     fs: firestore.firestore.Client = firestore.client()
-    data = fs.collection('ShopList').document(shopName).get()._data
+    data = fs.collection('ShopKey').document(f'{shopName}-{phoneNumber}').get()._data
     key = data['key']
     return key
 
@@ -19,7 +24,7 @@ def createJWT(alg: str, iss: str, sub: str, aud: str,
         "iat": iat,
         "exp": exp,
         "uid": uid
-    })
+    }, key=jwt_key)
     return encoded_jwt
 
 def generateOTP() :
