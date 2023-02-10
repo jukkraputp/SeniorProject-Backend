@@ -3,9 +3,9 @@ import jwt
 import math, random
 import json
 
-f = open('secret.json')
-data = json.load(f)
-jwt_key = data['jwt_key']
+with open('secret.json') as json_file:
+    data = json.load(json_file)
+    jwt_key = data['jwt_key']
 
 def getShopKey(shopName: str, phoneNumber: str):
     fs: firestore.firestore.Client = firestore.client()
