@@ -2,6 +2,7 @@ from datetime import datetime
 import makeobj
 from pydantic import BaseModel
 import datatypes
+import enums
 
 class Payload(makeobj.Obj):
 
@@ -15,6 +16,7 @@ class Payload(makeobj.Obj):
         itemList: list
         cost: float
         date: str
+        status: str
 
     class FinishOrder(BaseModel):
         shopKey: str

@@ -35,7 +35,6 @@ async def addOrder(payload: Payload.Order):
         f'Order/{shopKey}').child(f'order{orderId}')
     dic = payload.dict()
     dic.pop('shopName')
-    dic['date'] = payload.date
     if not ref.get():
         ref.set(dic)
         res = {

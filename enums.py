@@ -3,6 +3,12 @@ from enum import Enum
 import makeobj
 from routes import get, post
 
+class OrderStatus(Enum):
+    WaitingForPayment = 'Waiting for payment'
+    WaitingForPaymentConfirmation = 'Waiting for payment confirmation'
+    Cooking = 'Cooking'
+    Ready = 'Ready'
+    Complete = 'Complete'
 
 class Routes(makeobj.Obj):
 
