@@ -2,7 +2,7 @@ from datetime import datetime
 import makeobj
 from pydantic import BaseModel
 import datatypes
-import enums
+from enums import OrderStatus
 
 class Payload(makeobj.Obj):
 
@@ -49,3 +49,8 @@ class Payload(makeobj.Obj):
     class ClearToken(BaseModel):
         secret: str
         username: str
+
+    class SaveOrder(BaseModel):
+        username: str
+        shopName: str
+        orderId: int

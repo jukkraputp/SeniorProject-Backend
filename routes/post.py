@@ -188,3 +188,15 @@ async def clearToken(payload: Payload.ClearToken):
     return {
         'message': 'secret not match.'
     }
+
+
+async def saveOrder(payload: Payload.SaveOrder):
+    fs: firestore.firestore.Client = firestore.client()
+
+    fs.collection('Orders').document(payload.username).collection(payload.shopName).add({
+        'orderId': payload.orderId
+    })
+
+    return {
+        'message': True
+    }

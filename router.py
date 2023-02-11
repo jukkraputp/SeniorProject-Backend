@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 
-from enums import Routes
+from routing import Routes
 
 from payload import Payload
 from utilities import getShopKey
@@ -64,6 +64,10 @@ async def generateToken(payload: Payload.GenerateToken):
 @router.post('/clear-token')
 async def clearToken(payload: Payload.ClearToken):
     return await Routes.post.ClearToken(payload)
+
+@router.post('/save-order')
+async def saveOrder(payload: Payload.SaveOrder):
+    return await Routes.post.SaveOrder(payload)
 
 
 # ------------ AUTH ------------------------------------------------
