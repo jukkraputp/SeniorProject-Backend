@@ -35,7 +35,7 @@ async def addOrder(payload: Payload.Order):
         f'Order/{shopKey}').child(f'order{orderId}')
     dic = payload.dict()
     dic.pop('shopName')
-    if not ref.get():
+    if ref.get() is not None:
         ref.set(dic)
         return await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
     else:
