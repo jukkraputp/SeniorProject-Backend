@@ -54,7 +54,7 @@ def genShopKey(shopName: str):
     shopKey, fernet_key = encrypt(uid)
     with open('secret.json') as json_file:
         data = json.load(json_file)
-        data['{shopName}-fernet_key'] = str(fernet_key)
+        data[f'{shopName}-fernet_key'] = str(fernet_key)
         json_object = json.dumps(data)
         with open('secret.json', 'w') as outfile:
             outfile.write(json_object)
