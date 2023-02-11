@@ -37,7 +37,7 @@ async def addOrder(payload: Payload.Order):
     dic.pop('shopName')
     if not ref.get():
         ref.set(dic)
-        return saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
+        return await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
     else:
         return {
             'message': 'Error'
@@ -190,8 +190,8 @@ async def clearToken(payload: Payload.ClearToken):
 async def saveOrder(payload: Payload.SaveOrder):
     fs: firestore.firestore.Client = firestore.client()
 
-    fs.collection('Orders').document(payload.uid).collection(payload.shopName).add({
-        'orderId': payload.orderId
+    fs.collection('Orders').document(payload.uid).set({
+        'orderId': '{payload.shopName}-{payload.orderId}'
     })
 
     return {
