@@ -20,5 +20,5 @@ class Routes(makeobj.Obj):
         GenerateToken = staticmethod(post.generateToken)
         ClearToken = staticmethod(post.clearToken)
         SaveOrder = staticmethod(post.saveOrder)
-        CreateShopKey = staticmethod(post.createShopKey)
-        GetShopKey = staticmethod(post.getShopKey)
+        ''' CreateShopKey = staticmethod(post.createShopKey)
+        GetShopKey = staticmethod(post.getShopKey) '''

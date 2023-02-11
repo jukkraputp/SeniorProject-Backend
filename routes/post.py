@@ -5,7 +5,7 @@ from payload import Payload
 import uuid
 import logging
 from fastapi import HTTPException
-from utilities import generateOTP, genShopKey, decrypt
+from utilities import generateOTP
 import json
 from cryptography.fernet import Fernet
 
@@ -16,10 +16,8 @@ async def auth(payload: Payload.Auth):
 
 
 async def addOrder(payload: Payload.Order):
-    shopKey: str = await getShopKey(Payload.ShopKeyComponent(
-        shopName=payload.shopName, phoneNumber=payload.phoneNumber))
     today = f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}'
-    idRef = db.reference(f'OrderId/{shopKey}/{today}')
+    idRef = db.reference(f'OrderId/{payload.shopName}/{today}')
     idData = idRef.get()
     if idData is not None:
         print(f'idData: {idData}, type: {type(idData)}')
@@ -34,7 +32,7 @@ async def addOrder(payload: Payload.Order):
             'orderId': 2
         })
     ref = db.reference(
-        f'Order/{shopKey}').child(f'order{orderId}')
+        f'Order/{payload.shopName}').child(f'order{orderId}')
     dic = payload.dict()
     dic.pop('shopName')
     if ref.get() is not None:
@@ -212,7 +210,7 @@ async def saveOrder(payload: Payload.SaveOrder):
     }
 
 
-async def createShopKey(payload: Payload.ShopKeyComponent):
+''' async def createShopKey(payload: Payload.ShopKeyComponent):
     fs: firestore.firestore.Client = firestore.client()
 
     shopKey = genShopKey(payload.shopName)
@@ -244,9 +242,9 @@ async def getShopKey(payload: Payload.ShopKeyComponent):
     dic = data.to_dict()
     if dic is not None:
         key = dic['shopKey']
-        with open('../secret.json') as json_file:
+        with open('secret.json') as json_file:
             secret_data = json.load(json_file)
-            fernet_key = bytes(secret_data[f'{payload.shopName}-fernet_key'])
+            fernet_key = bytes(secret_data[f'{payload.shopName}-fernet_key'], 'utf-8')
             return decrypt(encMessage=key, fernet=Fernet(fernet_key))
     else:
-        return ''
+        return '' '''

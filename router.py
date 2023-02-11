@@ -79,7 +79,7 @@ async def saveOrder(payload: Payload.SaveOrder):
     return await Routes.post.SaveOrder(payload)
 
 
-@router.post('/create-shopkey')
+''' @router.post('/create-shopkey')
 async def createShopKey(payload: Payload.ShopKeyComponent, key: str = Header(default=None)):
     if key == api_key:
         return await Routes.post.CreateShopKey(payload)
@@ -96,7 +96,7 @@ async def getShopKey(payload: Payload.ShopKeyComponent, key: str = Header(defaul
     else:
         return {
             'message': False
-        }
+        } '''
 
 
 # ------------ AUTH ------------------------------------------------
