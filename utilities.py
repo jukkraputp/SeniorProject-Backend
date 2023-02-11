@@ -11,15 +11,6 @@ with open('secret.json') as json_file:
     salt = data['salt']
     jwt_key = data['jwt_key']
 
-
-def getShopKey(shopName: str, phoneNumber: str):
-    fs: firestore.firestore.Client = firestore.client()
-    data = fs.collection('ShopKey').document(
-        f'{shopName}-{phoneNumber}').get()._data
-    key = data['key']
-    return key
-
-
 def createJWT(alg: str, iss: str, sub: str, aud: str,
               iat: str, exp: str, uid: str):
     encoded_jwt = jwt.encode({

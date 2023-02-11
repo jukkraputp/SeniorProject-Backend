@@ -56,6 +56,6 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
-    class CreateShopKey(BaseModel):
+    class ShopKeyComponent(BaseModel):
         shopName: str
         phoneNumber: str

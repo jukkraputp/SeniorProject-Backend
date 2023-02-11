@@ -3,7 +3,6 @@ from fastapi import APIRouter, Body, Header
 from routing import Routes
 
 from payload import Payload
-from utilities import getShopKey
 
 import json
 
@@ -81,9 +80,19 @@ async def saveOrder(payload: Payload.SaveOrder):
 
 
 @router.post('/create-shopkey')
-async def createShopKey(payload: Payload.CreateShopKey, key: str = Header(default=None), ):
+async def createShopKey(payload: Payload.ShopKeyComponent, key: str = Header(default=None)):
     if key == api_key:
         return await Routes.post.CreateShopKey(payload)
+    else:
+        return {
+            'message': False
+        }
+
+
+@router.post('/get-shopkey')
+async def getShopKey(payload: Payload.ShopKeyComponent, key: str = Header(default=None)):
+    if key == api_key:
+        return await Routes.post.GetShopKey(payload)
     else:
         return {
             'message': False

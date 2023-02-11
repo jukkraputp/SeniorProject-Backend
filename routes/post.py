@@ -5,8 +5,9 @@ from payload import Payload
 import uuid
 import logging
 from fastapi import HTTPException
-from utilities import generateOTP, getShopKey, genShopKey
+from utilities import generateOTP, genShopKey, decrypt
 import json
+from cryptography.fernet import Fernet
 
 
 async def auth(payload: Payload.Auth):
@@ -15,7 +16,8 @@ async def auth(payload: Payload.Auth):
 
 
 async def addOrder(payload: Payload.Order):
-    shopKey: str = getShopKey(payload.shopName, payload.phoneNumber)
+    shopKey: str = await getShopKey(Payload.ShopKeyComponent(
+        shopName=payload.shopName, phoneNumber=payload.phoneNumber))
     today = f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}'
     idRef = db.reference(f'OrderId/{shopKey}/{today}')
     idData = idRef.get()
@@ -209,11 +211,13 @@ async def saveOrder(payload: Payload.SaveOrder):
         'message': True
     }
 
-async def createShopKey(payload: Payload.CreateShopKey):
+
+async def createShopKey(payload: Payload.ShopKeyComponent):
     fs: firestore.firestore.Client = firestore.client()
 
     shopKey = genShopKey(payload.shopName)
-    docRef = fs.collection('ShopKey').document(f'{payload.shopName}-{payload.phoneNumber}')
+    docRef = fs.collection('ShopKey').document(
+        f'{payload.shopName}-{payload.phoneNumber}')
     try:
         if not docRef.get().exists:
             docRef.set({
@@ -230,3 +234,19 @@ async def createShopKey(payload: Payload.CreateShopKey):
         return {
             'message': e
         }
+
+
+async def getShopKey(payload: Payload.ShopKeyComponent):
+    fs: firestore.firestore.Client = firestore.client()
+
+    data = fs.collection('ShopKey').document(
+        f'{payload.shopName}-{payload.phoneNumber}').get()
+    dic = data.to_dict()
+    if dic is not None:
+        key = dic['shopKey']
+        with open('../secret.json') as json_file:
+            secret_data = json.load(json_file)
+            fernet_key = bytes(secret_data[f'{payload.shopName}-fernet_key'])
+            return decrypt(encMessage=key, fernet=Fernet(fernet_key))
+    else:
+        return ''
