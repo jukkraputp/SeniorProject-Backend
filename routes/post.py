@@ -5,7 +5,7 @@ from payload import Payload
 import uuid
 import logging
 from fastapi import HTTPException
-from utilities import generateOTP, getShopKey
+from utilities import generateOTP, getShopKey, genShopKey
 import json
 
 
@@ -208,3 +208,25 @@ async def saveOrder(payload: Payload.SaveOrder):
     return {
         'message': True
     }
+
+async def createShopKey(payload: Payload.CreateShopKey):
+    fs: firestore.firestore.Client = firestore.client()
+
+    shopKey = genShopKey(payload.shopName)
+    docRef = fs.collection('ShopKey').document(f'{payload.shopName}-{payload.phoneNumber}')
+    try:
+        if not docRef.get().exists:
+            docRef.set({
+                'shopKey': shopKey,
+            })
+        else:
+            return {
+                'message': 'this shop already has a key'
+            }
+        return {
+            'message': True
+        }
+    except Exception as e:
+        return {
+            'message': e
+        }

@@ -55,3 +55,7 @@ class Payload(makeobj.Obj):
         uid: str
         shopName: str
         orderId: int
+
+    class CreateShopKey(BaseModel):
+        shopName: str
+        phoneNumber: str

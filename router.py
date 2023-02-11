@@ -1,11 +1,17 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Header
 
 from routing import Routes
 
 from payload import Payload
 from utilities import getShopKey
 
+import json
+
 router = APIRouter()
+
+with open('secret.json') as json_file:
+    data = json.load(json_file)
+    api_key = data['api_key']
 
 # ------------- GET -----------------------------------------------
 
@@ -13,7 +19,8 @@ router = APIRouter()
 @router.get('/')
 async def root(param: str):
     return await Routes.get.Home(param)
-    
+
+
 @router.get('/check-token/')
 async def checkToken(token: str):
     return await Routes.get.CheckToken(token)
@@ -57,17 +64,30 @@ async def register(payload: Payload.Register):
     print('register')
     return await Routes.post.Register(payload)
 
+
 @router.post('/generate-token')
 async def generateToken(payload: Payload.GenerateToken):
     return await Routes.post.GenerateToken(payload)
+
 
 @router.post('/clear-token')
 async def clearToken(payload: Payload.ClearToken):
     return await Routes.post.ClearToken(payload)
 
+
 @router.post('/save-order')
 async def saveOrder(payload: Payload.SaveOrder):
     return await Routes.post.SaveOrder(payload)
+
+
+@router.post('/create-shopkey')
+async def createShopKey(payload: Payload.CreateShopKey, key: str = Header(default=None), ):
+    if key == api_key:
+        return await Routes.post.CreateShopKey(payload)
+    else:
+        return {
+            'message': False
+        }
 
 
 # ------------ AUTH ------------------------------------------------
