@@ -20,11 +20,11 @@ class Payload(makeobj.Obj):
         status: str
 
     class FinishOrder(BaseModel):
-        shopKey: str
+        shopName: str
         orderId: str
 
     class CompleteOrder(BaseModel):
-        shopKey: str
+        shopName: str
         orderId: str
 
     class UpdateStorage(BaseModel):
@@ -56,6 +56,6 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
-    class ShopKeyComponent(BaseModel):
+    ''' class shopKeyComponent(BaseModel):
         shopName: str
-        phoneNumber: str
+        phoneNumber: str '''

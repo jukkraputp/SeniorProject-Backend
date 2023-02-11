@@ -45,7 +45,7 @@ async def addOrder(payload: Payload.Order):
 
 
 async def finishOrder(payload: Payload.FinishOrder):
-    ref = db.reference(f'Order/{payload.shopKey}/order{payload.orderId}')
+    ref = db.reference(f'Order/{payload.shopName}/order{payload.orderId}')
     ref.update({
         'isFinished': True
     })
@@ -55,7 +55,7 @@ async def finishOrder(payload: Payload.FinishOrder):
 
 
 async def completeOrder(payload: Payload.CompleteOrder):
-    ref = db.reference(f'Order/{payload.shopKey}/order{payload.orderId}')
+    ref = db.reference(f'Order/{payload.shopName}/order{payload.orderId}')
     data = dict(ref.get())
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
@@ -63,7 +63,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
 
     fs: firestore.firestore.Client = firestore.client()
     try:
-        fs.collection(u'History').document(payload.shopKey).collection(
+        fs.collection(u'History').document(payload.shopName).collection(
             f"{data['date'].year}{data['date'].month}{data['date'].day}").document(f'order{payload.orderId}').set(data)
         ref.delete()
         return {
@@ -210,16 +210,16 @@ async def saveOrder(payload: Payload.SaveOrder):
     }
 
 
-''' async def createShopKey(payload: Payload.ShopKeyComponent):
+''' async def createshopName(payload: Payload.shopNameComponent):
     fs: firestore.firestore.Client = firestore.client()
 
-    shopKey = genShopKey(payload.shopName)
-    docRef = fs.collection('ShopKey').document(
+    shopName = genshopName(payload.shopName)
+    docRef = fs.collection('shopName').document(
         f'{payload.shopName}-{payload.phoneNumber}')
     try:
         if not docRef.get().exists:
             docRef.set({
-                'shopKey': shopKey,
+                'shopName': shopName,
             })
         else:
             return {
@@ -234,14 +234,14 @@ async def saveOrder(payload: Payload.SaveOrder):
         }
 
 
-async def getShopKey(payload: Payload.ShopKeyComponent):
+async def getshopName(payload: Payload.shopNameComponent):
     fs: firestore.firestore.Client = firestore.client()
 
-    data = fs.collection('ShopKey').document(
+    data = fs.collection('shopName').document(
         f'{payload.shopName}-{payload.phoneNumber}').get()
     dic = data.to_dict()
     if dic is not None:
-        key = dic['shopKey']
+        key = dic['shopName']
         with open('secret.json') as json_file:
             secret_data = json.load(json_file)
             fernet_key = bytes(secret_data[f'{payload.shopName}-fernet_key'], 'utf-8')

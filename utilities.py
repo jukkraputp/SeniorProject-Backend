@@ -40,7 +40,7 @@ def generateOTP():
     return OTP
 
 
-def genShopKey(shopName: str):
+''' def genShopKey(shopName: str):
     uid: str = str(uuid.uuid5(namespace=uuid.uuid4(), name=shopName))
     shopKey, fernet_key = encrypt(uid)
     with open('secret.json') as json_file:
@@ -61,4 +61,4 @@ def encrypt(message: str):
 
 def decrypt(encMessage: str, fernet: Fernet):
     message = fernet.decrypt(encMessage).decode()
-    return message
+    return message '''
