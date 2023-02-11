@@ -11,6 +11,7 @@ class Payload(makeobj.Obj):
         password: str
 
     class Order(BaseModel):
+        uid: str
         shopName: str
         phoneNumber: str
         itemList: list
@@ -51,6 +52,6 @@ class Payload(makeobj.Obj):
         username: str
 
     class SaveOrder(BaseModel):
-        username: str
+        uid: str
         shopName: str
         orderId: int
