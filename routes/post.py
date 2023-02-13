@@ -32,10 +32,10 @@ async def addOrder(payload: Payload.Order):
             'orderId': 2
         })
     ref = db.reference(
-        f'Order/{payload.shopName}').child(f'order{orderId}')
+        f'Order/{payload.shopName}/order{orderId}')
     dic = payload.dict()
     dic.pop('shopName')
-    if ref.get() is not None:
+    if not ref.get():
         ref.set(dic)
         return await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
     else:
