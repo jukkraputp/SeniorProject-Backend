@@ -190,21 +190,11 @@ async def clearToken(payload: Payload.ClearToken):
 async def saveOrder(payload: Payload.SaveOrder):
     fs: firestore.firestore.Client = firestore.client()
 
-    docRef = fs.collection('Orders').document(payload.uid)
-    data = docRef.get().to_dict()
-    if data is not None:
-        print(data['data'])
-        orderList = data['data']
-    else:
-        orderList = []
-    orderList.append({
-        'shopName': payload.shopName,
-        'orderId': payload.orderId,
-        'isComplete': False
-    })
-    docRef.set({
-        'data': orderList
-    })
+    fs.collection('Orders').document(
+        payload.uid).collection(payload.shopName).add({
+            'orderId': payload.orderId,
+            'isComplete': False
+        })
 
     return {
         'message': True
