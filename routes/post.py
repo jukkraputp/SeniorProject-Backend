@@ -191,7 +191,8 @@ async def saveOrder(payload: Payload.SaveOrder):
     fs: firestore.firestore.Client = firestore.client()
 
     fs.collection('Orders').document(
-        payload.uid).collection(payload.shopName).add({
+        payload.uid).collection('data').add({
+            'shopName': payload.shopName,
             'orderId': payload.orderId,
             'isComplete': False
         })
