@@ -199,7 +199,8 @@ async def saveOrder(payload: Payload.SaveOrder):
         orderList = []
     orderList.append({
         'shopName': payload.shopName,
-        'orderId': payload.orderId
+        'orderId': payload.orderId,
+        'isComplete': False
     })
     docRef.set({
         'data': orderList
