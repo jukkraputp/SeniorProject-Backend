@@ -90,7 +90,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
         for doc in docs:
             if doc.exists:
                 fs.collection('Orders').document(doc.id).update({
-                    'isComplete': True
+                    'isCompleted': True
                 })
         return {
             'message': True
@@ -221,7 +221,7 @@ async def saveOrder(payload: Payload.SaveOrder):
         'shopName': payload.shopName,
         'orderId': payload.orderId,
         'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
-        'isComplete': False,
+        'isCompletedd': False,
         'isFinished': False,
         'isPaid': False
     })
