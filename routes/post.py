@@ -35,6 +35,7 @@ async def addOrder(payload: Payload.Order):
         f'Order/{payload.shopName}/order{orderId}')
     dic = payload.dict()
     dic.pop('shopName')
+    dic['isFinished'] = False
     if not ref.get():
         ref.set(dic)
         return await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
