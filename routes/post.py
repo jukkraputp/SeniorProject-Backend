@@ -190,12 +190,12 @@ async def clearToken(payload: Payload.ClearToken):
 async def saveOrder(payload: Payload.SaveOrder):
     fs: firestore.firestore.Client = firestore.client()
 
-    fs.collection('Orders').document(
-        payload.uid).collection('data-orderId').add({
-            'shopName': payload.shopName,
-            'orderId': payload.orderId,
-            'isComplete': False
-        })
+    fs.collection('Orders').add({
+        'uid': payload.uid,
+        'shopName': payload.shopName,
+        'orderId': payload.orderId,
+        'isComplete': False
+    })
 
     return {
         'message': True
