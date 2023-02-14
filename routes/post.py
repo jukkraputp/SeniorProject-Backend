@@ -72,7 +72,7 @@ async def finishOrder(payload: Payload.FinishOrder):
 
 
 async def completeOrder(payload: Payload.CompleteOrder):
-    ref = db.reference(f'Order/{payload.shopName}/order{payload.orderId}')
+    ref = db.reference(f'Order/{payload.shopName}/{payload.date}/order{payload.orderId}')
     data = dict(ref.get())
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
@@ -81,9 +81,9 @@ async def completeOrder(payload: Payload.CompleteOrder):
 
     fs: firestore.firestore.Client = firestore.client()
     try:
-        ''' fs.collection(u'History').document(payload.shopName).collection(
-            date).add(data)
-        ref.delete() '''
+        fs.collection(u'History').document(payload.shopName).collection(
+            payload.date).add(data)
+        ref.delete()
         docs = fs.collection('Orders').where('date', '==', payload.date).where(
             'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
         for doc in docs:
