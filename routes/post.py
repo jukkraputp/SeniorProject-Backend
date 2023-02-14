@@ -59,12 +59,13 @@ async def completeOrder(payload: Payload.CompleteOrder):
     data = dict(ref.get())
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
+    data['orderId'] = int(payload.orderId)
     print(data)
 
     fs: firestore.firestore.Client = firestore.client()
     try:
         fs.collection(u'History').document(payload.shopName).collection(
-            f"{data['date'].year}{data['date'].month}{data['date'].day}").document(f'order{payload.orderId}').set(data)
+            f"{data['date'].year}{data['date'].month}{data['date'].day}").add(data)
         ref.delete()
         return {
             'message': 'Success'
