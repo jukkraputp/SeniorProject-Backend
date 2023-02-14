@@ -221,7 +221,7 @@ async def saveOrder(payload: Payload.SaveOrder):
         'shopName': payload.shopName,
         'orderId': payload.orderId,
         'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
-        'isCompletedd': False,
+        'isCompleted': False,
         'isFinished': False,
         'isPaid': False
     })
