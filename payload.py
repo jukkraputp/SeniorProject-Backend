@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import datatypes
 from enums import OrderStatus
 
+
 class Payload(makeobj.Obj):
 
     class Auth(BaseModel):
@@ -17,7 +18,9 @@ class Payload(makeobj.Obj):
         itemList: list
         cost: float
         date: str
-        status: str
+        isCompleted: bool
+        isFinished: bool
+        isPaid: bool
 
     class FinishOrder(BaseModel):
         shopName: str
