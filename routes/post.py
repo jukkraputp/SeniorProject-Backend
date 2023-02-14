@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from utilities import generateOTP
 import json
 from cryptography.fernet import Fernet
+from dateutil import parser
 
 
 async def auth(payload: Payload.Auth):
@@ -16,7 +17,8 @@ async def auth(payload: Payload.Auth):
 
 
 async def addOrder(payload: Payload.Order):
-    today = f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}'
+    date: datetime = parser.parse(payload.date)
+    today = f'{date.year}/{date.month}/{date.day}'
     idRef = db.reference(f'OrderId/{payload.shopName}/{today}')
     idData = idRef.get()
     if idData is not None:
@@ -197,7 +199,7 @@ async def saveOrder(payload: Payload.SaveOrder):
         'uid': payload.uid,
         'shopName': payload.shopName,
         'orderId': payload.orderId,
-        'date': f'{datetime.now().year}{datetime.now().month}{datetime.now().day}',
+        'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
         'isComplete': False
     })
 
