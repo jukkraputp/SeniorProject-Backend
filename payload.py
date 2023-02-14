@@ -21,7 +21,8 @@ class Payload(makeobj.Obj):
 
     class FinishOrder(BaseModel):
         shopName: str
-        orderId: str
+        date: str
+        orderId: int
 
     class CompleteOrder(BaseModel):
         date: str

@@ -48,13 +48,27 @@ async def addOrder(payload: Payload.Order):
 
 
 async def finishOrder(payload: Payload.FinishOrder):
-    ref = db.reference(f'Order/{payload.shopName}/order{payload.orderId}')
-    ref.update({
-        'isFinished': True
-    })
-    return {
-        'message': 'Success'
-    }
+    fs: firestore.firestore.Client = firestore.client()
+    try:
+        ref = db.reference(
+            f'Order/{payload.shopName}/{payload.date}/order{payload.orderId}')
+        ref.update({
+            'isFinished': True
+        })
+        docs = fs.collection('Orders').where('date', '==', payload.date).where(
+            'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
+        for doc in docs:
+            if doc.exists:
+                fs.collection('Orders').document(doc.id).update({
+                    'isFinished': True
+                })
+        return {
+            'message': 'Success'
+        }
+    except Exception as e:
+        return {
+            'message': e
+        }
 
 
 async def completeOrder(payload: Payload.CompleteOrder):
@@ -70,7 +84,13 @@ async def completeOrder(payload: Payload.CompleteOrder):
         ''' fs.collection(u'History').document(payload.shopName).collection(
             date).add(data)
         ref.delete() '''
-        fs.collection('Orders').where('date', '==', payload.date).where('orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
+        docs = fs.collection('Orders').where('date', '==', payload.date).where(
+            'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
+        for doc in docs:
+            if doc.exists:
+                fs.collection('Orders').document(doc.id).update({
+                    'isFinished': True
+                })
         return {
             'message': 'Success'
         }
@@ -200,7 +220,8 @@ async def saveOrder(payload: Payload.SaveOrder):
         'shopName': payload.shopName,
         'orderId': payload.orderId,
         'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
-        'isComplete': False
+        'isComplete': False,
+        'isFinished': False
     })
 
     return {
