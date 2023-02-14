@@ -63,7 +63,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'isFinished': True
                 })
         return {
-            'message': 'Success'
+            'message': True
         }
     except Exception as e:
         return {
@@ -72,7 +72,8 @@ async def finishOrder(payload: Payload.FinishOrder):
 
 
 async def completeOrder(payload: Payload.CompleteOrder):
-    ref = db.reference(f'Order/{payload.shopName}/{payload.date}/order{payload.orderId}')
+    ref = db.reference(
+        f'Order/{payload.shopName}/{payload.date}/order{payload.orderId}')
     data = dict(ref.get())
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
@@ -92,7 +93,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
                     'isComplete': True
                 })
         return {
-            'message': 'Success'
+            'message': True
         }
     except Exception as e:
         raise e
@@ -221,12 +222,32 @@ async def saveOrder(payload: Payload.SaveOrder):
         'orderId': payload.orderId,
         'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
         'isComplete': False,
-        'isFinished': False
+        'isFinished': False,
+        'isPaid': False
     })
 
     return {
         'message': True
     }
+
+
+async def updatePayment(payload: Payload.UpdatePayment):
+    fs: firestore.firestore.Client = firestore.client()
+    try:
+        docs = fs.collection('Orders').where('date', '==', payload.date).where(
+            'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
+        for doc in docs:
+            if doc.exists:
+                fs.collection('Orders').document(doc.id).update({
+                    'isPaid': True
+                })
+        return {
+            'message': True
+        }
+    except Exception as e:
+        return {
+            'message': e
+        }
 
 
 ''' async def createshopName(payload: Payload.shopNameComponent):

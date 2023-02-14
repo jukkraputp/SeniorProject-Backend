@@ -58,6 +58,11 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
+    class UpdatePayment(BaseModel):
+        date: str
+        shopName: str
+        orderId: int
+
     ''' class shopKeyComponent(BaseModel):
         shopName: str
         phoneNumber: str '''
