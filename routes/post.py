@@ -89,7 +89,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
         for doc in docs:
             if doc.exists:
                 fs.collection('Orders').document(doc.id).update({
-                    'isFinished': True
+                    'isComplete': True
                 })
         return {
             'message': 'Success'
