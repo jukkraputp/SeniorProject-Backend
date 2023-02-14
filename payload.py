@@ -24,6 +24,7 @@ class Payload(makeobj.Obj):
         orderId: str
 
     class CompleteOrder(BaseModel):
+        date: str
         shopName: str
         orderId: str
 
