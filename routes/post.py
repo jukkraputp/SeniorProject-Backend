@@ -194,6 +194,7 @@ async def saveOrder(payload: Payload.SaveOrder):
         'uid': payload.uid,
         'shopName': payload.shopName,
         'orderId': payload.orderId,
+        'date': f'{datetime.now().year}{datetime.now().month}{datetime.now().day}',
         'isComplete': False
     })
 
