@@ -1,4 +1,4 @@
-from firebase_admin import firestore
+from firebase_admin import firestore, messaging
 import jwt
 import math
 import random
@@ -38,6 +38,11 @@ def generateOTP():
         OTP += digits[math.floor(random.random() * 10)]
 
     return OTP
+
+async def sendMessagesToTopics(data: dict, topic: str):
+    message = messaging.Message(data, topic)
+    response = await messaging.send(message=message)
+    return response
 
 
 ''' def genShopKey(shopName: str):

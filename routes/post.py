@@ -5,7 +5,7 @@ from payload import Payload
 import uuid
 import logging
 from fastapi import HTTPException
-from utilities import generateOTP
+from utilities import generateOTP, sendMessagesToTopics
 import json
 from cryptography.fernet import Fernet
 from dateutil import parser
@@ -46,6 +46,9 @@ async def addOrder(payload: Payload.Order):
                 'message': True,
                 'orderTopic': f'{payload.shopName}/{today}/{orderId}'
             }
+        await sendMessagesToTopics(data={
+            'message': 'addOrder',
+        }, topic=f'{payload.shopName}/{payload.date}/{orderId}')
     else:
         return {
             'message': False
@@ -67,6 +70,9 @@ async def finishOrder(payload: Payload.FinishOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isFinished': True
                 })
+        await sendMessagesToTopics(data={
+            'message': 'finishOrder',
+        }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
         return {
             'message': True
         }
@@ -97,6 +103,9 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isCompleted': True
                 })
+        await sendMessagesToTopics(data={
+            'message': 'completeOrder',
+        }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
         return {
             'message': True
         }
