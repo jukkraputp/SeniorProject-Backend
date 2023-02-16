@@ -43,18 +43,10 @@ async def addOrder(payload: Payload.Order):
         ref.set(dic)
         saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
         if saveOrderRes['message']:
-            ''' TOPIC_NAME = f'{payload.shopName}/{today}/{orderId}'
-            google_api_url = 'https://iid.googleapis.com/iid/v1/{payload.IID_TOKEN}/rel/topics/{TOPIC_NAME}'
-            with open('secret.json') as secret_file:
-                data = json.load(secret_file)
-                google_api_key = data['google_api_key']
-                res: requests.Response = requests.post(url=google_api_url, headers={
-                              'Authorization': f'key={google_api_key}',
-                              'Content-Type': 'application/json'})
-                print(res._content) '''
             return {
                 'message': True,
-                'orderTopic': f'{payload.shopName}/{today}_{orderId}'
+                'orderId': orderId,
+                'orderTopic': f'{payload.shopName}/{today}/{orderId}'
             }
     else:
         return {
@@ -77,9 +69,14 @@ async def finishOrder(payload: Payload.FinishOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isFinished': True
                 })
-        await sendMessagesToTopics(data={
-            'message': 'finishOrder',
-        }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
+        await sendMessagesToTopics(
+            notification={
+                'title': 'Your meals have been ready',
+                'body': "Let's go grab your food!"
+            },
+            data={
+                'message': 'finishOrder',
+            }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
         return {
             'message': True
         }
@@ -110,9 +107,13 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isCompleted': True
                 })
-        await sendMessagesToTopics(data={
-            'message': 'completeOrder',
-        }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
+        await sendMessagesToTopics(
+            notification={
+                'title': 'Your meals have been ready',
+                'body': "Let's go grab your food!"
+            }, data={
+                'message': 'completeOrder',
+            }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
         return {
             'message': True
         }

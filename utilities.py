@@ -11,6 +11,7 @@ with open('secret.json') as json_file:
     salt = data['salt']
     jwt_key = data['jwt_key']
 
+
 def createJWT(alg: str, iss: str, sub: str, aud: str,
               iat: str, exp: str, uid: str):
     encoded_jwt = jwt.encode({
@@ -39,9 +40,13 @@ def generateOTP():
 
     return OTP
 
-async def sendMessagesToTopics(data: dict, topic: str):
-    message = messaging.Message(data, topic)
-    response = await messaging.send(message=message)
+
+def sendMessagesToTopics(notification: dict, data: dict, topic: str):
+    noti = messaging.Notification(
+        title=notification['title'], body=notification['body'])
+    message = messaging.Message(
+        notification=noti, data=data, topic=topic)
+    response = messaging.send(message=message)
     return response
 
 

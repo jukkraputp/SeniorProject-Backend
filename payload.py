@@ -70,3 +70,8 @@ class Payload(makeobj.Obj):
     ''' class shopKeyComponent(BaseModel):
         shopName: str
         phoneNumber: str '''
+
+    class testFCM(BaseModel):
+        shopName: str
+        date: str
+        orderId: int
