@@ -51,10 +51,10 @@ async def addOrder(payload: Payload.Order):
                 res: requests.Response = requests.post(url=google_api_url, headers={
                               'Authorization': f'key={google_api_key}',
                               'Content-Type': 'application/json'})
-                print(res)
+                print(res._content)
             return {
                 'message': True,
-                'orderTopic': f'{payload.shopName}/{today}/{orderId}'
+                'orderTopic': f'{payload.shopName}_{today}_{orderId}'
             }
     else:
         return {
