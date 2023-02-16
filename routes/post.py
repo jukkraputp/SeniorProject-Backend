@@ -40,10 +40,15 @@ async def addOrder(payload: Payload.Order):
     dic['isFinished'] = False
     if not ref.get():
         ref.set(dic)
-        return await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
+        saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
+        if saveOrderRes['message']:
+            return {
+                'message': True,
+                'orderTopic': f'{payload.shopName}/{today}/{orderId}'
+            }
     else:
         return {
-            'message': 'Error'
+            'message': False
         }
 
 
