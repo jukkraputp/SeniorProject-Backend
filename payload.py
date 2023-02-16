@@ -21,6 +21,7 @@ class Payload(makeobj.Obj):
         isCompleted: bool
         isFinished: bool
         isPaid: bool
+        IID_TOKEN: str
 
     class FinishOrder(BaseModel):
         shopName: str

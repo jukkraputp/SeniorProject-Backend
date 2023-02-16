@@ -1,5 +1,5 @@
 from datetime import datetime
-from firebase_admin import db, firestore
+from firebase_admin import db, firestore, messaging
 from _firebase import storage_bucket, firebase_auth
 from payload import Payload
 import uuid
@@ -9,6 +9,7 @@ from utilities import generateOTP, sendMessagesToTopics
 import json
 from cryptography.fernet import Fernet
 from dateutil import parser
+import requests
 
 
 async def auth(payload: Payload.Auth):
@@ -42,13 +43,19 @@ async def addOrder(payload: Payload.Order):
         ref.set(dic)
         saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
         if saveOrderRes['message']:
+            TOPIC_NAME = f'{payload.shopName}/{today}/{orderId}'
+            google_api_url = 'https://iid.googleapis.com/iid/v1/{payload.IID_TOKEN}/rel/topics/{TOPIC_NAME}'
+            with open('secret.json') as secret_file:
+                data = json.load(secret_file)
+                google_api_key = data['google_api_key']
+                res: requests.Response = requests.post(url=google_api_url, headers={
+                              'Authorization': f'key={google_api_key}',
+                              'Content-Type': 'application/json'})
+                print(res)
             return {
                 'message': True,
                 'orderTopic': f'{payload.shopName}/{today}/{orderId}'
             }
-        await sendMessagesToTopics(data={
-            'message': 'addOrder',
-        }, topic=f'{payload.shopName}/{payload.date}/{orderId}')
     else:
         return {
             'message': False
