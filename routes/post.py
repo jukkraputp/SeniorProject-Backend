@@ -70,7 +70,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                 })
         await sendMessagesToTopics(data={
             'message': 'finishOrder',
-        }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
+        }, topic=f'{payload.shopName}_{payload.date}_{payload.orderId}')
         return {
             'message': True
         }
@@ -103,7 +103,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 })
         await sendMessagesToTopics(data={
             'message': 'completeOrder',
-        }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
+        }, topic=f'{payload.shopName}_{payload.date}_{payload.orderId}')
         return {
             'message': True
         }
