@@ -76,7 +76,10 @@ async def finishOrder(payload: Payload.FinishOrder):
             },
             data={
                 'message': 'finishOrder',
-                'data': f'Your Order #{payload.orderId} of {payload.shopName} has been ready!'
+                'data': json.dumps({
+                    'orderId': payload.orderId,
+                    'shopName': payload.shopName
+                })
             }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
         return {
             'message': True

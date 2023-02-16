@@ -3,6 +3,7 @@ from router import router
 import _firebase
 from utilities import sendMessagesToTopics
 from payload import Payload
+import json
 
 app = FastAPI()
 
@@ -17,6 +18,10 @@ async def testFCM(payload: Payload.testFCM):
             'body': "Let's go grab your food"
         },
         data={
-        'message': 'finishOrder',
-    }, topic=f'{payload.shopName}_{payload.date}_{payload.orderId}')
+            'message': 'finishOrder',
+            'data': json.dumps({
+                'orderId': payload.orderId,
+                'shopName': payload.shopName
+            })
+        }, topic=f'{payload.shopName}_{payload.date}_{payload.orderId}')
     return res
