@@ -46,7 +46,7 @@ async def addOrder(payload: Payload.Order):
             return {
                 'message': True,
                 'orderId': orderId,
-                'orderTopic': f'{payload.shopName}/{today}/{orderId}'
+                'orderTopic': f'{payload.shopName}_{today.replace("/","_")}_{orderId}'
             }
     else:
         return {
@@ -80,7 +80,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'orderId': payload.orderId,
                     'shopName': payload.shopName
                 })
-            }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
+            }, topic=f'{payload.shopName}_{payload.date}_{payload.orderId}')
         return {
             'message': True
         }
@@ -117,7 +117,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 'body': "Let's go grab your food!"
             }, data={
                 'message': 'completeOrder',
-            }, topic=f'{payload.shopName}/{payload.date}/{payload.orderId}')
+            }, topic=f'{payload.shopName}_{payload.date.replace("/","_")}_{payload.orderId}')
         return {
             'message': True
         }
