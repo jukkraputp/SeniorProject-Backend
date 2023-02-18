@@ -44,8 +44,9 @@ class Payload(makeobj.Obj):
 
     class Register(BaseModel):
         username: str
-        # email: str
+        email: str
         password: str
+        phoneNumber: str
         mode: str
 
     class GenerateToken(BaseModel):

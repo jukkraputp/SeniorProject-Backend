@@ -151,23 +151,36 @@ async def updateProduct(payload: Payload.UpdateProduct):
 
 
 async def register(payload: Payload.Register):
-    if payload.mode != 'Register' and payload.mode != 'Customer':
+    if payload.mode != 'Manager' and payload.mode != 'Customer':
         return False
     fs: firestore.firestore.Client = firestore.client()
     try:
         user: firebase_auth.UserRecord = firebase_auth.create_user(
-            email=f'{payload.username}@gmail.com', password=payload.password)
+            email=payload.email, password=payload.password, phone_number=payload.phoneNumber, display_name=payload.username)
         try:
             fs.collection(payload.mode).document(f'{user.uid}').create({
-                'name': payload.username,
+                'username': payload.username,
+                'password': payload.password,
+                'email': payload.email
             })
-            return True
+
+            return {
+                'status': True,
+                'message': 'Registration has been success.'
+            }
         except Exception as e:
             print('register2::', e)
-            return False
+            return {
+                'status': False,
+                'message': e.__str__()
+            }
+
     except Exception as e:
         print('register1::', e)
-        return False
+        return {
+            'status': False,
+            'message': e.__str__()
+        }
 
 
 async def generateToken(payload: Payload.GenerateToken):
@@ -221,7 +234,7 @@ async def clearToken(payload: Payload.ClearToken):
             doc.delete()
 
         docs = fs.collection('Manager').where(
-            'name', '==', payload.username).get()
+            'username', '==', payload.username).get()
         for doc in docs:
             dic: dict = doc._data
             if dic.__contains__('Reception'):
