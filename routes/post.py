@@ -303,7 +303,8 @@ async def addShop(payload: Payload.AddShop):
             'shopName': payload.shopName,
             'phoneNumber': payload.phoneNumber.replace(countryCode, '0'),
             'rating': 0,
-            'rater': 0
+            'rater': 0,
+            'ownerUID': payload.uid
         })
         fs.collection('Manager').document(payload.uid).update({
             u'shopList': firestore.firestore.ArrayUnion([payload.shopName])
