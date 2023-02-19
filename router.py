@@ -82,6 +82,10 @@ async def saveOrder(payload: Payload.SaveOrder):
 async def updatePayment(payload: Payload.UpdatePayment):
     return await Routes.post.UpdatePayment(payload)
 
+@router.post('/add-shop')
+async def addShop(payload: Payload.AddShop):
+    return await Routes.post.AddShop(payload)
+
 
 ''' @router.post('/create-shopkey')
 async def createShopKey(payload: Payload.ShopKeyComponent, key: str = Header(default=None)):

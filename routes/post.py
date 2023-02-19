@@ -289,6 +289,26 @@ async def updatePayment(payload: Payload.UpdatePayment):
         }
 
 
+async def addShop(payload: Payload.AddShop):
+    fs: firestore.firestore.Client = firestore.client()
+
+    try:
+        fs.collection('ShopList').add({
+            'shopName': payload.shopName,
+            'phoneNumber': payload.phoneNumber,
+            'rating': 0,
+            'rater': 0
+        })
+        return {
+            'status': True
+        }
+    except Exception as e:
+        return {
+            'status': False,
+            'message': e.__str__()
+        }
+
+
 ''' async def createshopName(payload: Payload.shopNameComponent):
     fs: firestore.firestore.Client = firestore.client()
 

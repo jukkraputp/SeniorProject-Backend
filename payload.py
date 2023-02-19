@@ -68,6 +68,10 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
+    class AddShop(BaseModel):
+        shopName: str
+        phoneNumber: str
+
     ''' class shopKeyComponent(BaseModel):
         shopName: str
         phoneNumber: str '''
