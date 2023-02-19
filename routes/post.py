@@ -1,5 +1,5 @@
 from datetime import datetime
-from firebase_admin import db, firestore, messaging
+from firebase_admin import db, firestore
 from _firebase import storage_bucket, firebase_auth
 from payload import Payload
 import uuid
@@ -7,9 +7,7 @@ import logging
 from fastapi import HTTPException
 from utilities import generateOTP, sendMessagesToTopics
 import json
-from cryptography.fernet import Fernet
 from dateutil import parser
-import requests
 
 
 async def auth(payload: Payload.Auth):
@@ -20,7 +18,7 @@ async def auth(payload: Payload.Auth):
 async def addOrder(payload: Payload.Order):
     date: datetime = parser.parse(payload.date)
     today = f'{date.year}/{date.month}/{date.day}'
-    idRef = db.reference(f'OrderId/{payload.shopName}/{today}')
+    idRef = db.reference(f'OrderId/{payload.uid}-{payload.shopName}/{today}')
     idData = idRef.get()
     if idData is not None:
         print(f'idData: {idData}, type: {type(idData)}')
@@ -35,7 +33,7 @@ async def addOrder(payload: Payload.Order):
             'orderId': 2
         })
     ref = db.reference(
-        f'Order/{payload.shopName}/{today}/order{orderId}')
+        f'Order/{payload.uid}-{payload.shopName}/{today}/order{orderId}')
     dic = payload.dict()
     dic.pop('shopName')
     dic['isFinished'] = False
@@ -46,7 +44,7 @@ async def addOrder(payload: Payload.Order):
             return {
                 'message': True,
                 'orderId': orderId,
-                'orderTopic': f'{payload.shopName}_{today.replace("/","_")}_{orderId}'
+                'orderTopic': f'{payload.uid}_{payload.shopName}_{today.replace("/","_")}_{orderId}'
             }
     else:
         return {
@@ -58,11 +56,11 @@ async def finishOrder(payload: Payload.FinishOrder):
     fs: firestore.firestore.Client = firestore.client()
     try:
         ref = db.reference(
-            f'Order/{payload.shopName}/{payload.date}/order{payload.orderId}')
+            f'Order/{payload.uid}-{payload.shopName}/{payload.date}/order{payload.orderId}')
         ref.update({
             'isFinished': True
         })
-        docs = fs.collection('Orders').where('date', '==', payload.date).where(
+        docs = fs.collection('Orders').where('shopUID', '==', payload.uid).where('date', '==', payload.date).where(
             'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
         for doc in docs:
             if doc.exists:
@@ -80,7 +78,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'orderId': payload.orderId,
                     'shopName': payload.shopName
                 })
-            }, topic=f'{payload.shopName}_{payload.date.replace("/", "_")}_{payload.orderId}')
+            }, topic=f'{payload.uid}_{payload.shopName}_{payload.date.replace("/", "_")}_{payload.orderId}')
         return {
             'message': True
         }
@@ -92,7 +90,7 @@ async def finishOrder(payload: Payload.FinishOrder):
 
 async def completeOrder(payload: Payload.CompleteOrder):
     ref = db.reference(
-        f'Order/{payload.shopName}/{payload.date}/order{payload.orderId}')
+        f'Order/{payload.uid}-{payload.shopName}/{payload.date}/order{payload.orderId}')
     data = dict(ref.get())
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
@@ -101,10 +99,10 @@ async def completeOrder(payload: Payload.CompleteOrder):
 
     fs: firestore.firestore.Client = firestore.client()
     try:
-        fs.collection(u'History').document(payload.shopName).collection(
+        fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').collection(
             payload.date).add(data)
         ref.delete()
-        docs = fs.collection('Orders').where('date', '==', payload.date).where(
+        docs = fs.collection('Orders').where('shopUID', '==', payload.uid).where('date', '==', payload.date).where(
             'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
         for doc in docs:
             if doc.exists:
@@ -117,7 +115,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 'body': "Let's go grab your food!"
             }, data={
                 'message': 'completeOrder',
-            }, topic=f'{payload.shopName}_{payload.date.replace("/","_")}_{payload.orderId}')
+            }, topic=f'{payload.uid}_{payload.shopName}_{payload.date.replace("/","_")}_{payload.orderId}')
         return {
             'message': True
         }
@@ -131,18 +129,18 @@ async def updateStorage():
 
 
 async def updateProduct(payload: Payload.UpdateProduct):
-    print(payload)
     fs: firestore.firestore.Client = firestore.client()
     try:
-        if payload.product.delete:
-            fs.collection(u'Menu').document(
-                payload.shop_key).collection(payload.type).document(payload.id).delete()
-        else:
-            fs.collection(u'Menu').document(
-                payload.shop_key).collection(payload.type).document(payload.id).set({
-                    "name": payload.product.name,
-                    "price": payload.product.price
-                })
+        for product in payload.productList:
+            if product.delete:
+                fs.collection(u'Menu').document(
+                    f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).delete()
+            else:
+                fs.collection(u'Menu').document(
+                    f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).set({
+                        "name": product.name,
+                        "price": product.price
+                    })
 
     except Exception as e:
         print(e)
@@ -152,7 +150,10 @@ async def updateProduct(payload: Payload.UpdateProduct):
 
 async def register(payload: Payload.Register):
     if payload.mode != 'Manager' and payload.mode != 'Customer':
-        return False
+        return {
+            'status': False,
+            'message': f'mode: {payload.mode} is not available.'
+        }
     fs: firestore.firestore.Client = firestore.client()
     try:
         user: firebase_auth.UserRecord = firebase_auth.create_user(
@@ -190,28 +191,32 @@ async def generateToken(payload: Payload.GenerateToken):
     fs: firestore.firestore.Client = firestore.client()
     token = firebase_auth.create_custom_token(uid).decode('utf-8')
     # print(f'token: {token}')
-    otp = generateOTP()
+
     # print('try')
     try:
-        # print('setting otp')
-        fs.collection('OTP').document(otp).set({
-            'token': token
-        })
-        # print('otp has been set')
-        # print('setting token')
-        fs.collection('TokenList').document(token).set({
-            "key": payload.key,
-            "mode": payload.mode
-        })
-        # print('token has been set')
-        doc = fs.collection('Manager').document(payload.uid).get()
-        if doc.exists:
-            data = doc._data
-            data[payload.mode] = otp
-            fs.collection('Manager').document(payload.uid).set(data)
-        return {
-            'OTP': otp
-        }
+        while(True):
+            otp = generateOTP()
+            data = fs.collection('OTP').document(otp).get()
+            if not data.exists:
+                # print('setting otp')
+                fs.collection('OTP').document(otp).set({
+                    'token': token
+                })
+                # print('otp has been set')
+                # print('setting token')
+                fs.collection('TokenList').document(token).set({
+                    "key": payload.key,
+                    "mode": payload.mode
+                })
+                # print('token has been set')
+                doc = fs.collection('Manager').document(payload.uid).get()
+                if doc.exists:
+                    data = doc._data
+                    data[payload.mode] = otp
+                    fs.collection('Manager').document(payload.uid).set(data)
+                return {
+                    'OTP': otp
+                }
     except Exception as e:
         logging.error(f'error {e}')
         raise HTTPException(

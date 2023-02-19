@@ -14,7 +14,6 @@ class Payload(makeobj.Obj):
     class Order(BaseModel):
         uid: str
         shopName: str
-        phoneNumber: str
         itemList: list
         cost: float
         date: str
@@ -24,11 +23,13 @@ class Payload(makeobj.Obj):
         IID_TOKEN: str
 
     class FinishOrder(BaseModel):
+        uid: str
         shopName: str
         date: str
         orderId: int
 
     class CompleteOrder(BaseModel):
+        uid: str
         date: str
         shopName: str
         orderId: str
@@ -37,10 +38,9 @@ class Payload(makeobj.Obj):
         item: datatypes.Item
 
     class UpdateProduct(BaseModel):
-        shop_key: str
-        type: str
-        id: str
-        product: datatypes.Product
+        uid: str
+        shopName: str
+        productList: list[datatypes.Product]
 
     class Register(BaseModel):
         username: str
