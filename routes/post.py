@@ -305,6 +305,9 @@ async def addShop(payload: Payload.AddShop):
             'rating': 0,
             'rater': 0
         })
+        fs.collection('Manager').document(payload.uid).update({
+            u'shopList': firestore.firestore.ArrayUnion([payload.shopName])
+        })
         return {
             'status': True
         }
