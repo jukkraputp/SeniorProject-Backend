@@ -296,11 +296,12 @@ async def updatePayment(payload: Payload.UpdatePayment):
 
 async def addShop(payload: Payload.AddShop):
     fs: firestore.firestore.Client = firestore.client()
+    countryCode = '+66'
 
     try:
         fs.collection('ShopList').add({
             'shopName': payload.shopName,
-            'phoneNumber': payload.phoneNumber,
+            'phoneNumber': payload.phoneNumber.replace(countryCode, '0'),
             'rating': 0,
             'rater': 0
         })
