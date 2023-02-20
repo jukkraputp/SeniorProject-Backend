@@ -142,7 +142,8 @@ async def updateProduct(payload: Payload.UpdateProduct):
                         "name": product.name,
                         "price": product.price,
                         "time": product.time,
-                        "image": product.imageUrl
+                        "image": product.imageUrl,
+                        "available": product.available
                     })
     except Exception as e:
         print(e)

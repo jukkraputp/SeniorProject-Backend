@@ -9,6 +9,7 @@ class Product:
     type: str
     time: float
     imageUrl: str
+    available: bool
 
 @dataclass
 class Item:
