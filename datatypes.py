@@ -7,6 +7,7 @@ class Product:
     price: float
     delete: bool
     type: str
+    time: float
 
 @dataclass
 class Item:
