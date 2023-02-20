@@ -72,6 +72,8 @@ class Payload(makeobj.Obj):
         uid: str
         shopName: str
         phoneNumber: str
+        latitude: float
+        longitude: float
 
     class EditType(BaseModel):
         uid: str

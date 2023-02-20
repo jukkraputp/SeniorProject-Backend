@@ -333,7 +333,9 @@ async def addShop(payload: Payload.AddShop):
             'phoneNumber': payload.phoneNumber.replace(countryCode, '0'),
             'rating': 0,
             'rater': 0,
-            'ownerUID': payload.uid
+            'ownerUID': payload.uid,
+            'latitude': payload.latitude,
+            'longitude': payload.longitude
         })
         fs.collection('Menu').document(f'{payload.uid}-{payload.shopName}').set({
             'types': []
