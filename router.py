@@ -78,17 +78,26 @@ async def clearToken(payload: Payload.ClearToken):
 async def saveOrder(payload: Payload.SaveOrder):
     return await Routes.post.SaveOrder(payload)
 
+
 @router.post('/update-payment')
 async def updatePayment(payload: Payload.UpdatePayment):
     return await Routes.post.UpdatePayment(payload)
 
+
 @router.post('/add-shop')
-async def addShop(payload: Payload.AddShop):
+async def addShop(payload: Payload.Shop):
     return await Routes.post.AddShop(payload)
+
+
+@router.post('/delete-shop')
+async def deleteShop(payload: Payload.Shop):
+    return await Routes.post.DeleteShop(payload)
+
 
 @router.post('/add-type')
 async def addType(payload: Payload.EditType):
     return await Routes.post.AddType(payload)
+
 
 @router.post('/delete-type')
 async def deleteType(payload: Payload.EditType):

@@ -24,5 +24,6 @@ class Routes(makeobj.Obj):
         AddShop = staticmethod(post.addShop)
         AddType = staticmethod(post.addType)
         DeleteType = staticmethod(post.deleteType)
+        DeleteShop = staticmethod(post.deleteShop)
         ''' CreateShopKey = staticmethod(post.createShopKey)
         GetShopKey = staticmethod(post.getShopKey) '''

@@ -323,7 +323,7 @@ async def updatePayment(payload: Payload.UpdatePayment):
         }
 
 
-async def addShop(payload: Payload.AddShop):
+async def addShop(payload: Payload.Shop):
     fs: firestore.firestore.Client = firestore.client()
     countryCode = '+66'
 
@@ -351,6 +351,24 @@ async def addShop(payload: Payload.AddShop):
             'status': False,
             'message': e.__str__()
         }
+
+
+async def deleteShop(payload: Payload.Shop):
+    fs: firestore.firestore.Client = firestore.client()
+
+    docs = fs.collection('ShopList').where(
+        'shopName', '==', payload.shopName).where('ownerUID', '==', payload.uid).get()
+    for doc in docs:
+        if doc.exists:
+            doc.reference.delete()
+
+    fs.collection('Menu').document(
+        f'{payload.uid}-{payload.shopName}').delete()
+
+    fs.collection('Manager').document(payload.uid).update({
+        'shopList': firestore.firestore.ArrayRemove([payload.shopName])
+    })
+    pass
 
 
 ''' async def createshopName(payload: Payload.shopNameComponent):

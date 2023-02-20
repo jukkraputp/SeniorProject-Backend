@@ -68,7 +68,7 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
-    class AddShop(BaseModel):
+    class Shop(BaseModel):
         uid: str
         shopName: str
         phoneNumber: str
