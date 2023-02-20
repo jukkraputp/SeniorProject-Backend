@@ -73,6 +73,11 @@ class Payload(makeobj.Obj):
         shopName: str
         phoneNumber: str
 
+    class EditType(BaseModel):
+        uid: str
+        shopName: str
+        type: str
+
     ''' class shopKeyComponent(BaseModel):
         shopName: str
         phoneNumber: str '''

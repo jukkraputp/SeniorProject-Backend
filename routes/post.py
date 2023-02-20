@@ -136,9 +136,6 @@ async def updateProduct(payload: Payload.UpdateProduct):
                 fs.collection(u'Menu').document(
                     f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).delete()
             else:
-                fs.collection(u'Menu').document(f'{payload.uid}-{payload.shopName}').update({
-                    'types': firestore.firestore.ArrayUnion([product.type])
-                })
                 fs.collection(u'Menu').document(
                     f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).set({
                         "name": product.name,
@@ -146,11 +143,36 @@ async def updateProduct(payload: Payload.UpdateProduct):
                         "time": product.time,
                         "image": product.imageUrl
                     })
-
     except Exception as e:
         print(e)
         return e
     return True
+
+
+async def updateAvailableType(uid: str, shopName: str, type: str):
+    fs: firestore.firestore.Client = firestore.client()
+    docs = fs.collection(u'Menu').document(
+        f'{uid}-{shopName}').collection(type).get()
+    for element in docs:
+        doc: firestore.firestore.DocumentSnapshot = element
+        if not doc.exists:
+            await deleteType(Payload.EditType(uid=uid, shopName=shopName, type=type))
+
+
+async def addType(payload: Payload.EditType):
+    fs: firestore.firestore.Client = firestore.client()
+    fs.collection(u'Menu').document(
+        f'{payload.uid}-{payload.shopName}').update({
+            'types': firestore.firestore.ArrayUnion([payload.type])
+        })
+
+
+async def deleteType(payload: Payload.EditType):
+    fs: firestore.firestore.Client = firestore.client()
+    fs.collection(u'Menu').document(
+        f'{payload.uid}-{payload.shopName}').update({
+            'types': firestore.firestore.ArrayRemove([payload.type])
+        })
 
 
 async def register(payload: Payload.Register):

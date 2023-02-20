@@ -86,6 +86,13 @@ async def updatePayment(payload: Payload.UpdatePayment):
 async def addShop(payload: Payload.AddShop):
     return await Routes.post.AddShop(payload)
 
+@router.post('/add-type')
+async def addType(payload: Payload.EditType):
+    return await Routes.post.AddType(payload)
+
+@router.post('/delete-type')
+async def deleteType(payload: Payload.EditType):
+    return await Routes.post.DeleteType(payload)
 
 ''' @router.post('/create-shopkey')
 async def createShopKey(payload: Payload.ShopKeyComponent, key: str = Header(default=None)):
