@@ -8,6 +8,7 @@ class Product:
     delete: bool
     type: str
     time: float
+    imageUrl: str
 
 @dataclass
 class Item:

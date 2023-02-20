@@ -140,7 +140,8 @@ async def updateProduct(payload: Payload.UpdateProduct):
                     f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).set({
                         "name": product.name,
                         "price": product.price,
-                        "time": product.time
+                        "time": product.time,
+                        "image": product.imageUrl
                     })
 
     except Exception as e:
