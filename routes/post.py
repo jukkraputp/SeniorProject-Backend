@@ -136,6 +136,9 @@ async def updateProduct(payload: Payload.UpdateProduct):
                 fs.collection(u'Menu').document(
                     f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).delete()
             else:
+                fs.collection(u'Menu').document(f'{payload.uid}-{payload.shopName}').update({
+                    'types': firestore.firestore.ArrayUnion([product.type])
+                })
                 fs.collection(u'Menu').document(
                     f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).set({
                         "name": product.name,
