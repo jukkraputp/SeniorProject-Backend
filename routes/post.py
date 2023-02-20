@@ -334,7 +334,7 @@ async def addShop(payload: Payload.AddShop):
             'ownerUID': payload.uid
         })
         fs.collection('Menu').document(f'{payload.uid}-{payload.shopName}').set({
-            'shopList': []
+            'types': []
         })
         fs.collection('Manager').document(payload.uid).update({
             u'shopList': firestore.firestore.ArrayUnion([payload.shopName])
