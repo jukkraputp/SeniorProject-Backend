@@ -138,6 +138,7 @@ async def updateProduct(payload: Payload.UpdateProduct):
             else:
                 fs.collection(u'Menu').document(
                     f'{payload.uid}-{payload.shopName}').collection(product.type).document(product.id).set({
+                        "id": product.id,
                         "name": product.name,
                         "price": product.price,
                         "time": product.time,
