@@ -68,12 +68,16 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
-    class Shop(BaseModel):
+    class AddShop(BaseModel):
         uid: str
         shopName: str
         phoneNumber: str
         latitude: float
         longitude: float
+
+    class DeleteShop(BaseModel):
+        uid: str
+        shopName: str
 
     class EditType(BaseModel):
         uid: str

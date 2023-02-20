@@ -85,12 +85,12 @@ async def updatePayment(payload: Payload.UpdatePayment):
 
 
 @router.post('/add-shop')
-async def addShop(payload: Payload.Shop):
+async def addShop(payload: Payload.AddShop):
     return await Routes.post.AddShop(payload)
 
 
 @router.post('/delete-shop')
-async def deleteShop(payload: Payload.Shop):
+async def deleteShop(payload: Payload.DeleteShop):
     return await Routes.post.DeleteShop(payload)
 
 

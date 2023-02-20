@@ -323,7 +323,7 @@ async def updatePayment(payload: Payload.UpdatePayment):
         }
 
 
-async def addShop(payload: Payload.Shop):
+async def addShop(payload: Payload.AddShop):
     fs: firestore.firestore.Client = firestore.client()
     countryCode = '+66'
 
@@ -353,7 +353,7 @@ async def addShop(payload: Payload.Shop):
         }
 
 
-async def deleteShop(payload: Payload.Shop):
+async def deleteShop(payload: Payload.DeleteShop):
     fs: firestore.firestore.Client = firestore.client()
 
     docs = fs.collection('ShopList').where(
