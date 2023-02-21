@@ -79,7 +79,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'orderId': payload.orderId,
                     'shopName': payload.shopName
                 })
-            }, topic=f'{payload.uid}_{payload.shopName}_{payload.date.replace("/", "_")}_{payload.orderId}')
+            }, topic=f'{payload.uid}_{payload.shopName.replace(" ", "_")}_{payload.date.replace("/", "_")}_{payload.orderId}')
         return {
             'message': True
         }
