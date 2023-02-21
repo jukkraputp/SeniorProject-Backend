@@ -18,7 +18,8 @@ async def auth(payload: Payload.Auth):
 async def addOrder(payload: Payload.Order):
     date: datetime = parser.parse(payload.date)
     today = f'{date.year}/{date.month}/{date.day}'
-    idRef = db.reference(f'OrderId/{payload.ownerUID}-{payload.shopName}/{today}')
+    idRef = db.reference(
+        f'OrderId/{payload.ownerUID}-{payload.shopName}/{today}')
     idData = idRef.get()
     if idData is not None:
         print(f'idData: {idData}, type: {type(idData)}')
@@ -44,7 +45,7 @@ async def addOrder(payload: Payload.Order):
             return {
                 'message': True,
                 'orderId': orderId,
-                'orderTopic': f'{payload.ownerUID}_{payload.shopName}_{today.replace("/","_")}_{orderId}'
+                'orderTopic': f'{payload.ownerUID.replace("", "_")}_{payload.shopName}_{today.replace("/","_")}_{orderId}'
             }
     else:
         return {
