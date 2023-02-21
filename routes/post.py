@@ -335,8 +335,7 @@ async def addShop(payload: Payload.AddShop):
             'rating': float(0),
             'rater': 0,
             'ownerUID': payload.uid,
-            'latitude': payload.latitude,
-            'longitude': payload.longitude
+            'position': firestore.firestore.GeoPoint(latitude=payload.latitude, longitude=payload.longitude)
         })
         fs.collection('Menu').document(f'{payload.uid}-{payload.shopName}').set({
             'types': []
