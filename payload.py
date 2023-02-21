@@ -15,6 +15,7 @@ class Payload(makeobj.Obj):
         uid: str
         ownerUID: str
         shopName: str
+        shopPhoneNumber: str
         itemList: list
         cost: float
         date: str
