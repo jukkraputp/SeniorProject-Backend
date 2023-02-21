@@ -332,7 +332,7 @@ async def addShop(payload: Payload.AddShop):
         fs.collection('ShopList').add({
             'shopName': payload.shopName,
             'phoneNumber': payload.phoneNumber.replace(countryCode, '0'),
-            'rating': 0,
+            'rating': float(0),
             'rater': 0,
             'ownerUID': payload.uid,
             'latitude': payload.latitude,
