@@ -13,6 +13,7 @@ class Payload(makeobj.Obj):
 
     class Order(BaseModel):
         uid: str
+        ownerUID: str
         shopName: str
         itemList: list
         cost: float
@@ -60,6 +61,7 @@ class Payload(makeobj.Obj):
 
     class SaveOrder(BaseModel):
         uid: str
+        ownerUID: str
         shopName: str
         orderId: int
 

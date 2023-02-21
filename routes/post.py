@@ -39,7 +39,7 @@ async def addOrder(payload: Payload.Order):
     dic['isFinished'] = False
     if not ref.get():
         ref.set(dic)
-        saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, shopName=payload.shopName, orderId=orderId))
+        saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, ownerUID=payload.ownerUID, shopName=payload.shopName, orderId=orderId))
         if saveOrderRes['message']:
             return {
                 'message': True,
@@ -291,6 +291,7 @@ async def saveOrder(payload: Payload.SaveOrder):
 
     fs.collection('Orders').add({
         'uid': payload.uid,
+        'ownerUID': payload.ownerUID,
         'shopName': payload.shopName,
         'orderId': payload.orderId,
         'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
