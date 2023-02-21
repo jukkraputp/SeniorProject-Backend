@@ -18,6 +18,7 @@ class Payload(makeobj.Obj):
         shopPhoneNumber: str
         itemList: list
         cost: float
+        totalTime: float
         date: str
         isCompleted: bool
         isFinished: bool
