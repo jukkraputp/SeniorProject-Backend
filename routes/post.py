@@ -45,7 +45,7 @@ async def addOrder(payload: Payload.Order):
             return {
                 'message': True,
                 'orderId': orderId,
-                'orderTopic': f'{payload.ownerUID.replace("", "_")}_{payload.shopName}_{today.replace("/","_")}_{orderId}'
+                'orderTopic': f'{payload.ownerUID.replace(" ", "_")}_{payload.shopName}_{today.replace("/","_")}_{orderId}'
             }
     else:
         return {
