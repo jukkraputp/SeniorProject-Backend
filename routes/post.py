@@ -61,7 +61,7 @@ async def finishOrder(payload: Payload.FinishOrder):
         ref.update({
             'isFinished': True
         })
-        docs = fs.collection('Orders').where('shopUID', '==', payload.uid).where('date', '==', payload.date).where(
+        docs = fs.collection('Orders').where('ownerUID', '==', payload.uid).where('date', '==', payload.date).where(
             'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
         for doc in docs:
             if doc.exists:
