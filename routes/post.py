@@ -192,7 +192,8 @@ async def register(payload: Payload.Register):
             fs.collection(payload.mode).document(f'{user.uid}').create({
                 'username': payload.username,
                 'password': payload.password,
-                'email': payload.email
+                'email': payload.email,
+                'shopList': []
             })
 
             return {
