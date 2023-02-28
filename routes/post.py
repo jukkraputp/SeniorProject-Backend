@@ -243,9 +243,13 @@ async def generateToken(payload: Payload.GenerateToken):
                 # print('token has been set')
                 doc = fs.collection('Manager').document(payload.uid).get()
                 if doc.exists:
-                    data = doc._data
-                    data[f'{payload.shopName}-{payload.mode}'] = otp
-                    fs.collection('Manager').document(payload.uid).set(data)
+                    manager_data = doc._data
+                    obj: dict[str, str]
+                    for obj in manager_data['shopList']:
+                        if obj['shopName'] == payload.shopName:
+                            obj[payload.mode] = otp
+                            break
+                    fs.collection('Manager').document(payload.uid).set(manager_data)
                 return {
                     'OTP': otp
                 }
@@ -344,7 +348,7 @@ async def addShop(payload: Payload.AddShop):
             'types': []
         })
         fs.collection('Manager').document(payload.uid).update({
-            u'shopList': firestore.firestore.ArrayUnion([payload.shopName])
+            u'shopList': firestore.firestore.ArrayUnion([{'shopName': payload.shopName}])
         })
         return {
             'status': True
@@ -369,7 +373,7 @@ async def deleteShop(payload: Payload.DeleteShop):
         f'{payload.uid}-{payload.shopName}').delete()
 
     fs.collection('Manager').document(payload.uid).update({
-        'shopList': firestore.firestore.ArrayRemove([payload.shopName])
+        'shopList': firestore.firestore.ArrayRemove([{'shopName': payload.shopName}])
     })
     pass
 
