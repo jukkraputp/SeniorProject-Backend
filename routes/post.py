@@ -101,11 +101,14 @@ async def completeOrder(payload: Payload.CompleteOrder):
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
     data['orderId'] = int(payload.orderId)
-    data['isCompleted'] = True;
+    data['isCompleted'] = True
     print(data)
 
     fs: firestore.firestore.Client = firestore.client()
     try:
+        fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').update({
+            'dates': firestore.firestore.ArrayUnion([payload.date])
+        })
         fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').collection(
             payload.date).add(data)
         ref.delete()
@@ -357,14 +360,18 @@ async def addShop(payload: Payload.AddShop):
         fs.collection('Manager').document(payload.uid).update({
             u'shopList': firestore.firestore.ArrayUnion([{'shopName': payload.shopName}])
         })
-        return {
-            'status': True
-        }
+        fs.collection('History').document(f'{payload.uid}-{payload.shopName}').update({
+            'dates': firestore.firestore.ArrayUnion([f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}'])
+        })
+
     except Exception as e:
         return {
             'status': False,
             'message': e.__str__()
         }
+    return {
+        'status': True
+    }
 
 
 async def deleteShop(payload: Payload.DeleteShop):
