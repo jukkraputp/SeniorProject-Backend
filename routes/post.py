@@ -68,7 +68,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isFinished': True
                 })
-        await sendMessagesToTopics(
+        sendMessagesToTopics(
             notification={
                 'title': 'Your meals have been ready',
                 'body': "Let's go grab your food!"
@@ -80,19 +80,24 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'shopName': payload.shopName
                 })
             }, topic=f'{payload.uid}_{payload.shopName.replace(" ", "_")}_{payload.date.replace("/", "_")}_{payload.orderId}')
-        return {
-            'message': True
-        }
     except Exception as e:
         return {
             'message': e
         }
+    return {
+        'message': True
+    }
 
 
 async def completeOrder(payload: Payload.CompleteOrder):
-    ref = db.reference(
-        f'Order/{payload.uid}-{payload.shopName}/{payload.date}/order{payload.orderId}')
-    data = dict(ref.get())
+    path = f'Order/{payload.uid}-{payload.shopName}/{payload.date}/order{payload.orderId}'
+    ref = db.reference(path=path)
+    orderData = ref.get()
+    if orderData is None:
+        return {
+            'message': 'order not found'
+        }
+    data = dict(orderData)
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
     data['orderId'] = int(payload.orderId)
@@ -110,7 +115,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isCompleted': True
                 })
-        await sendMessagesToTopics(
+        sendMessagesToTopics(
             notification={
                 'title': 'Your meals have been ready',
                 'body': "Let's go grab your food!"
