@@ -116,7 +116,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 'body': "Let's go grab your food!"
             }, data={
                 'message': 'completeOrder',
-            }, topic=f'{payload.uid}_{payload.shopName}_{payload.date.replace("/","_")}_{payload.orderId}')
+            }, topic=f'{payload.uid}_{payload.shopName.replace(" ","_")}_{payload.date.replace("/","_")}_{payload.orderId}')
         return {
             'message': True
         }
@@ -249,7 +249,8 @@ async def generateToken(payload: Payload.GenerateToken):
                         if obj['shopName'] == payload.shopName:
                             obj[payload.mode] = otp
                             break
-                    fs.collection('Manager').document(payload.uid).set(manager_data)
+                    fs.collection('Manager').document(
+                        payload.uid).set(manager_data)
                 return {
                     'OTP': otp
                 }
