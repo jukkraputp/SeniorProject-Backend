@@ -101,6 +101,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
     data.pop('isFinished')
     data['date'] = datetime.fromisoformat(data['date'])
     data['orderId'] = int(payload.orderId)
+    data['isCompleted'] = True;
     print(data)
 
     fs: firestore.firestore.Client = firestore.client()
