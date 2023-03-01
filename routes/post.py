@@ -38,18 +38,21 @@ async def addOrder(payload: Payload.Order):
     dic = payload.dict()
     dic.pop('shopName')
     dic['isFinished'] = False
+    dic['paymentImage'] = None
     if not ref.get():
         ref.set(dic)
         saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, ownerUID=payload.ownerUID, shopName=payload.shopName, orderId=orderId))
         if saveOrderRes['message']:
             return {
-                'message': True,
+                'status': True,
+                'message': "an order has been added",
                 'orderId': orderId,
                 'orderTopic': f'{payload.ownerUID}_{payload.shopName.replace(" ", "_")}_{today.replace("/","_")}_{orderId}'
             }
     else:
         return {
-            'message': False
+            'status': False,
+            'message': "error has occurred"
         }
 
 
@@ -82,10 +85,11 @@ async def finishOrder(payload: Payload.FinishOrder):
             }, topic=f'{payload.uid}_{payload.shopName.replace(" ", "_")}_{payload.date.replace("/", "_")}_{payload.orderId}')
     except Exception as e:
         return {
-            'message': e
+            'status': False,
+            'message': e.__str__()
         }
     return {
-        'message': True
+        'status': True
     }
 
 
@@ -95,6 +99,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
     orderData = ref.get()
     if orderData is None:
         return {
+            'status': False,
             'message': 'order not found'
         }
     data = dict(orderData)
@@ -127,10 +132,13 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 'message': 'completeOrder',
             }, topic=f'{payload.uid}_{payload.shopName.replace(" ","_")}_{payload.date.replace("/","_")}_{payload.orderId}')
         return {
-            'message': True
+            'status': True
         }
     except Exception as e:
-        raise e
+        return {
+            'status': False,
+            'message': e.__str__()
+        }
 
 
 async def updateStorage():
@@ -157,8 +165,13 @@ async def updateProduct(payload: Payload.UpdateProduct):
                     })
     except Exception as e:
         print(e)
-        return e
-    return True
+        return {
+            'status': True,
+            'message': e.__str__()
+        }
+    return {
+        'status': True
+    }
 
 
 async def updateAvailableType(uid: str, shopName: str, type: str):
@@ -261,6 +274,7 @@ async def generateToken(payload: Payload.GenerateToken):
                     fs.collection('Manager').document(
                         payload.uid).set(manager_data)
                 return {
+                    'status': True,
                     'OTP': otp
                 }
     except Exception as e:
@@ -295,10 +309,11 @@ async def clearToken(payload: Payload.ClearToken):
             fs.collection('Manager').document(doc.id).set(dic)
 
         return {
-            'message': True
+            'status': True
         }
 
     return {
+        'status': False,
         'message': 'secret not match.'
     }
 
@@ -318,27 +333,26 @@ async def saveOrder(payload: Payload.SaveOrder):
     })
 
     return {
-        'message': True
+        'status': True
     }
 
 
 async def updatePayment(payload: Payload.UpdatePayment):
-    fs: firestore.firestore.Client = firestore.client()
     try:
-        docs = fs.collection('Orders').where('date', '==', payload.date).where(
-            'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
-        for doc in docs:
-            if doc.exists:
-                fs.collection('Orders').document(doc.id).update({
-                    'isPaid': True
-                })
-        return {
-            'message': True
-        }
+        path = f'Order/{payload.ownerUID}-{payload.shopName}/{payload.date}/order{payload.orderId}'
+        orderRef = db.reference(path)
+        orderData = dict(orderRef.get())
+        print(path, orderData)
+        orderData['paymentImage'] = payload.paymentImageUrl
+        orderRef.set(orderData)
     except Exception as e:
         return {
-            'message': e
+            'status': False,
+            'message': e.__str__()
         }
+    return {
+        'status': True
+    }
 
 
 async def addShop(payload: Payload.AddShop):
