@@ -42,7 +42,7 @@ async def addOrder(payload: Payload.Order):
     if not ref.get():
         ref.set(dic)
         saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, ownerUID=payload.ownerUID, shopName=payload.shopName, orderId=orderId))
-        if saveOrderRes['message']:
+        if saveOrderRes['status']:
             return {
                 'status': True,
                 'message': "an order has been added",
