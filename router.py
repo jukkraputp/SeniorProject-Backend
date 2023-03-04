@@ -79,9 +79,9 @@ async def saveOrder(payload: Payload.SaveOrder):
     return await Routes.post.SaveOrder(payload)
 
 
-@router.post('/update-payment')
-async def updatePayment(payload: Payload.UpdatePayment):
-    return await Routes.post.UpdatePayment(payload)
+@router.post('/upload-payment-image')
+async def updatePayment(payload: Payload.UploadPaymentImage):
+    return await Routes.post.UploadPaymentImage(payload)
 
 
 @router.post('/add-shop')

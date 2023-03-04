@@ -20,7 +20,7 @@ class Routes(makeobj.Obj):
         GenerateToken = staticmethod(post.generateToken)
         ClearToken = staticmethod(post.clearToken)
         SaveOrder = staticmethod(post.saveOrder)
-        UpdatePayment = staticmethod(post.updatePayment)
+        UploadPaymentImage = staticmethod(post.uploadPaymentImage)
         AddShop = staticmethod(post.addShop)
         AddType = staticmethod(post.addType)
         DeleteType = staticmethod(post.deleteType)

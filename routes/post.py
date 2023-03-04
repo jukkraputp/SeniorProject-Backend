@@ -339,7 +339,7 @@ async def saveOrder(payload: Payload.SaveOrder):
     }
 
 
-async def updatePayment(payload: Payload.UpdatePayment):
+async def uploadPaymentImage(payload: Payload.UploadPaymentImage):
     try:
         path = f'Order/{payload.ownerUID}-{payload.shopName}/{payload.date}/order{payload.orderId}'
         orderRef = db.reference(path)

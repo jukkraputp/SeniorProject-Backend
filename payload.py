@@ -67,7 +67,7 @@ class Payload(makeobj.Obj):
         shopName: str
         orderId: int
 
-    class UpdatePayment(BaseModel):
+    class UploadPaymentImage(BaseModel):
         ownerUID: str
         shopName: str
         date: str
