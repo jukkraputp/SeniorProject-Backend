@@ -361,9 +361,20 @@ async def updatePayment(payload: Payload.UpdatePayment):
 async def addShop(payload: Payload.AddShop):
     fs: firestore.firestore.Client = firestore.client()
     countryCode = '+66'
-    status = False
 
     try:
+        doc = fs.collection('Manager').document(payload.uid).get()
+        if doc.exists:
+            data = doc.to_dict()
+            if data == None:
+                data = {'shopList': []}
+            shopList = data['shopList']
+            for shopName in shopList:
+                if payload.shopName == shopName:
+                    raise Exception('This shop name is already exist.')
+        fs.collection('Manager').document(payload.uid).update({
+            u'shopList': firestore.firestore.ArrayUnion([{'shopName': payload.shopName}])
+        })
         fs.collection('ShopList').add({
             'shopName': payload.shopName,
             'phoneNumber': payload.phoneNumber.replace(countryCode, '0'),
@@ -375,13 +386,10 @@ async def addShop(payload: Payload.AddShop):
         fs.collection('Menu').document(f'{payload.uid}-{payload.shopName}').set({
             'types': []
         })
-        fs.collection('Manager').document(payload.uid).update({
-            u'shopList': firestore.firestore.ArrayUnion([{'shopName': payload.shopName}])
-        })
         fs.collection('History').document(f'{payload.uid}-{payload.shopName}').set({
             'dates': []
         })
-        
+
     except Exception as e:
         return {
             'status': False,
