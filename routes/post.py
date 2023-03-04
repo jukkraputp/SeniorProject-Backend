@@ -340,6 +340,7 @@ async def saveOrder(payload: Payload.SaveOrder):
 
 
 async def uploadPaymentImage(payload: Payload.UploadPaymentImage):
+    fs: firestore.firestore.Client = firestore.client()
     try:
         path = f'Order/{payload.ownerUID}-{payload.shopName}/{payload.date}/order{payload.orderId}'
         orderRef = db.reference(path)
@@ -347,6 +348,14 @@ async def uploadPaymentImage(payload: Payload.UploadPaymentImage):
         print(path, orderData)
         orderData['paymentImage'] = payload.paymentImageUrl
         orderRef.set(orderData)
+        docs = fs.collection('Orders').where('shopName', '==', payload.shopName).where(
+            'ownerUID', '==', payload.ownerUID).where('orderId', '==', payload.orderId).where('date', '==', payload.date).get()
+        for doc in docs:
+            if doc.exists:
+                data = doc.to_dict()
+                if data != None:
+                    data['paymentImage'] = payload.paymentImageUrl
+                    fs.collection('Orders').document(doc.id).set(data)
     except Exception as e:
         return {
             'status': False,
