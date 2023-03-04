@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from firebase_admin import db, firestore
 from _firebase import storage_bucket, firebase_auth
 from payload import Payload
@@ -17,7 +17,7 @@ async def auth(payload: Payload.Auth):
 
 
 async def addOrder(payload: Payload.Order):
-    date: datetime = parser.parse(payload.date)
+    date: datetime = parser.parse(payload.date).astimezone(pytz.utc)
     today = f'{date.year}/{date.month}/{date.day}'
     idRef = db.reference(
         f'OrderId/{payload.ownerUID}-{payload.shopName}/{today}')
@@ -107,7 +107,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
     data.pop('isFinished')
     print(data['date'])
     data['date'] = datetime.fromisoformat(
-        data['date'])
+        data['date']).astimezone(pytz.utc)
     data['orderId'] = int(payload.orderId)
     data['isCompleted'] = True
     print(data)
@@ -323,13 +323,12 @@ async def clearToken(payload: Payload.ClearToken):
 
 async def saveOrder(payload: Payload.SaveOrder):
     fs: firestore.firestore.Client = firestore.client()
-
     fs.collection('Orders').add({
         'uid': payload.uid,
         'ownerUID': payload.ownerUID,
         'shopName': payload.shopName,
         'orderId': payload.orderId,
-        'date': f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}',
+        'date': f'{datetime.utcnow().year}/{datetime.utcnow().month}/{datetime.utcnow().day}',
         'isCompleted': False,
         'isFinished': False,
         'isPaid': False
