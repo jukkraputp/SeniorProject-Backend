@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from firebase_admin import db, firestore
 from _firebase import storage_bucket, firebase_auth
 from payload import Payload
@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from utilities import generateOTP, sendMessagesToTopics
 import json
 from dateutil import parser
+import pytz
 
 
 async def auth(payload: Payload.Auth):
@@ -104,7 +105,9 @@ async def completeOrder(payload: Payload.CompleteOrder):
         }
     data = dict(orderData)
     data.pop('isFinished')
-    data['date'] = datetime.fromisoformat(data['date'])
+    print(data['date'])
+    data['date'] = datetime.fromisoformat(
+        data['date'])
     data['orderId'] = int(payload.orderId)
     data['isCompleted'] = True
     print(data)
@@ -358,6 +361,7 @@ async def updatePayment(payload: Payload.UpdatePayment):
 async def addShop(payload: Payload.AddShop):
     fs: firestore.firestore.Client = firestore.client()
     countryCode = '+66'
+    status = False
 
     try:
         fs.collection('ShopList').add({
@@ -374,10 +378,10 @@ async def addShop(payload: Payload.AddShop):
         fs.collection('Manager').document(payload.uid).update({
             u'shopList': firestore.firestore.ArrayUnion([{'shopName': payload.shopName}])
         })
-        fs.collection('History').document(f'{payload.uid}-{payload.shopName}').update({
-            'dates': firestore.firestore.ArrayUnion([f'{datetime.now().year}/{datetime.now().month}/{datetime.now().day}'])
+        fs.collection('History').document(f'{payload.uid}-{payload.shopName}').set({
+            'dates': []
         })
-
+        
     except Exception as e:
         return {
             'status': False,
