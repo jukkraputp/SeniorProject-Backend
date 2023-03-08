@@ -266,9 +266,9 @@ async def generateToken(payload: Payload.GenerateToken):
                     "phoneNumber": payload.phoneNumber,
                     "mode": payload.mode
                 })
-                docs = fs.collection('TokenList').where('shopName', '==', payload.shopName).where('mode', '==', payload.mode).where('Document ID', '!=', token).get()
+                docs = fs.collection('TokenList').where('shopName', '==', payload.shopName).where('mode', '==', payload.mode).get()
                 for doc in docs:
-                    if doc.exists:
+                    if doc.exists and doc.id != token:
                         fs.collection('TokenList').document(doc.id).delete()
                 # print('token has been set')
                 doc = fs.collection('Manager').document(payload.uid).get()
