@@ -53,9 +53,10 @@ class Payload(makeobj.Obj):
         mode: str
 
     class GenerateToken(BaseModel):
-        shopName: str
-        mode: str
         uid: str
+        shopName: str
+        phoneNumber: str
+        mode: str
 
     class ClearToken(BaseModel):
         secret: str

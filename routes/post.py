@@ -263,6 +263,7 @@ async def generateToken(payload: Payload.GenerateToken):
                 fs.collection('TokenList').document(token).set({
                     "uid": payload.uid,
                     "shopName": payload.shopName,
+                    "phoneNumber": payload.phoneNumber,
                     "mode": payload.mode
                 })
                 # print('token has been set')
