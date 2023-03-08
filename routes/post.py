@@ -277,6 +277,10 @@ async def generateToken(payload: Payload.GenerateToken):
                             break
                     fs.collection('Manager').document(
                         payload.uid).set(manager_data)
+                docs = fs.collection('TokenList').where('shopName', '==', payload.shopName).where('mode', '==', payload.mode).get()
+                for doc in docs:
+                    if doc.exists:
+                        fs.collection('TokenList').document(doc.id).delete()
                 return {
                     'status': True,
                     'OTP': otp
