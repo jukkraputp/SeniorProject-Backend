@@ -5,7 +5,7 @@ from payload import Payload
 import uuid
 import logging
 from fastapi import HTTPException
-from utilities import generateOTP, sendMessagesToTopics
+from utilities import generateOTP, sendMessagesToTopics, encodeShopName, decodeShopName
 import json
 from dateutil import parser
 import pytz
@@ -72,6 +72,8 @@ async def finishOrder(payload: Payload.FinishOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isFinished': True
                 })
+        encodedShopName = encodeShopName(payload.shopName)
+        messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{payload.orderId}'
         sendMessagesToTopics(
             notification={
                 'title': 'Your meals have been ready',
@@ -83,7 +85,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'orderId': payload.orderId,
                     'shopName': payload.shopName
                 })
-            }, topic=f'{payload.uid}_{payload.shopName.replace(" ", "_")}_{payload.date.replace("/", "_")}_{payload.orderId}')
+            }, topic=messageTopic)
     except Exception as e:
         return {
             'status': False,
@@ -266,7 +268,8 @@ async def generateToken(payload: Payload.GenerateToken):
                     "phoneNumber": payload.phoneNumber,
                     "mode": payload.mode
                 })
-                docs = fs.collection('TokenList').where('shopName', '==', payload.shopName).where('mode', '==', payload.mode).get()
+                docs = fs.collection('TokenList').where(
+                    'shopName', '==', payload.shopName).where('mode', '==', payload.mode).get()
                 for doc in docs:
                     if doc.exists and doc.id != token:
                         fs.collection('TokenList').document(doc.id).delete()
@@ -281,7 +284,7 @@ async def generateToken(payload: Payload.GenerateToken):
                             break
                     fs.collection('Manager').document(
                         payload.uid).set(manager_data)
-                
+
                 return {
                     'status': True,
                     'OTP': otp

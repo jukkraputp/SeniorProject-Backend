@@ -41,6 +41,19 @@ def generateOTP():
     return OTP
 
 
+def encodeShopName(shopName: str):
+    encoded = list(shopName.encode('utf-8'))
+    return encoded.__str__().replace('[', '__list__format__1__').replace(']', '__list__format__2__').replace(', ', '__list__format__3__')
+
+
+def decodeShopName(encodedShopName: str):
+    bytesDataStr = encodedShopName.replace(
+        '__list__format__1__', '[').replace('__list__format__2__', ']').replace('__list__format__3__', ', ').strip('][').split(', ')
+    bytesDataInt = list(map(int, bytesDataStr))
+    bytesData = bytes(bytesDataInt)
+    return bytes.decode(bytesData)
+
+
 def sendMessagesToTopics(notification: dict, data: dict, topic: str):
     noti = messaging.Notification(
         title=notification['title'], body=notification['body'])
