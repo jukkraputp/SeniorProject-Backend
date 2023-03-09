@@ -44,11 +44,13 @@ async def addOrder(payload: Payload.Order):
         ref.set(dic)
         saveOrderRes = await saveOrder(Payload.SaveOrder(uid=payload.uid, ownerUID=payload.ownerUID, shopName=payload.shopName, orderId=orderId))
         if saveOrderRes['status']:
+            encodedShopName = encodeShopName(payload.shopName.replace(' ', '_'))
+            messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{orderId}'
             return {
                 'status': True,
                 'message': "an order has been added",
                 'orderId': orderId,
-                'orderTopic': f'{payload.ownerUID}_{payload.shopName.replace(" ", "_")}_{today.replace("/","_")}_{orderId}'
+                'orderTopic': messageTopic
             }
     else:
         return {
