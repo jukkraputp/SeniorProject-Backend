@@ -21,6 +21,7 @@ class Routes(makeobj.Obj):
         ClearToken = staticmethod(post.clearToken)
         SaveOrder = staticmethod(post.saveOrder)
         UploadPaymentImage = staticmethod(post.uploadPaymentImage)
+        UpdatePaymentStatus = staticmethod(post.updatePaymentStatus)
         AddShop = staticmethod(post.addShop)
         AddType = staticmethod(post.addType)
         DeleteType = staticmethod(post.deleteType)

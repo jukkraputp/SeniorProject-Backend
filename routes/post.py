@@ -386,6 +386,27 @@ async def uploadPaymentImage(payload: Payload.UploadPaymentImage):
     }
 
 
+async def updatePaymentStatus(payload: Payload.UpdatePaymentStatus):
+    fs: firestore.firestore.Client = firestore.client()
+    try:
+        docs = fs.collection('Orders').where('ownerUID', '==', payload.ownerUID).where(
+            'shopName', '==', payload.shopName).where('date', '==', payload.date).where('orderId', '==', payload.orderId).get()
+        for doc in docs:
+            if doc.exists:
+                fs.collection('Orders').document(doc.id).update({
+                    'isPaid': True
+                })
+    except Exception as e:
+        print(e)
+        return {
+            'status': False,
+            'message': e.__str__()
+        }
+    return {
+        'status': True
+        }
+
+
 async def addShop(payload: Payload.AddShop):
     fs: firestore.firestore.Client = firestore.client()
     countryCode = '+66'
