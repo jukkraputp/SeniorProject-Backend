@@ -34,7 +34,7 @@ class Payload(makeobj.Obj):
         uid: str
         date: str
         shopName: str
-        orderId: str
+        orderId: int
 
     class UpdateStorage(BaseModel):
         item: datatypes.Item

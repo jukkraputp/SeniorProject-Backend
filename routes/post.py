@@ -101,7 +101,7 @@ async def finishOrder(payload: Payload.FinishOrder):
 
 
 async def completeOrder(payload: Payload.CompleteOrder):
-    path = f'Order/{payload.uid}-{payload.shopName}/{payload.date}/order{payload.orderId}'
+    ''' path = f'Order/{payload.uid}-{payload.shopName}/{payload.date}/order{payload.orderId}'
     ref = db.reference(path=path)
     orderData = ref.get()
     if orderData is None:
@@ -115,22 +115,26 @@ async def completeOrder(payload: Payload.CompleteOrder):
     data['date'] = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%f%z')
     data['orderId'] = int(payload.orderId)
     data['isCompleted'] = True
-    print(data)
+    print(data) '''
     fs: firestore.firestore.Client = firestore.client()
     try:
-        fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').update({
+        ''' fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').update({
             'dates': firestore.firestore.ArrayUnion([payload.date])
         })
         fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').collection(
-            payload.date).add(data)
-        ref.delete()
+            payload.date).add(data) '''
+        # ref.delete()
+        print(payload.uid, payload.shopName, payload.orderId, payload.date)
         docs = fs.collection('Orders').where('ownerUID', '==', payload.uid).where('date', '==', payload.date).where(
             'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
+        # docs = fs.collection('Orders').where('ownerUID', '==', payload.uid).get()
+        print(docs)
         for doc in docs:
             if doc.exists:
-                fs.collection('Orders').document(doc.id).update({
+                print(doc.to_dict())
+                ''' fs.collection('Orders').document(doc.id).update({
                     'isCompleted': True
-                })
+                }) '''
         encodedShopName = encodeShopName(payload.shopName.replace(" ", "_"))
         messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{payload.orderId}'
         sendMessagesToTopics(
