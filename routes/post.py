@@ -396,6 +396,12 @@ async def updatePaymentStatus(payload: Payload.UpdatePaymentStatus):
                 fs.collection('Orders').document(doc.id).update({
                     'isPaid': True
                 })
+        ref = db.reference(
+            f'Order/{payload.ownerUID}-{payload.shopName}/{payload.date}/order{payload.orderId}')
+        if ref.get():
+            ref.update({
+                'isPaid': True
+            })
     except Exception as e:
         print(e)
         return {
@@ -404,7 +410,7 @@ async def updatePaymentStatus(payload: Payload.UpdatePaymentStatus):
         }
     return {
         'status': True
-        }
+    }
 
 
 async def addShop(payload: Payload.AddShop):
