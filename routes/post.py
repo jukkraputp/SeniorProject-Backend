@@ -72,7 +72,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isFinished': True
                 })
-        encodedShopName = encodeShopName(payload.shopName)
+        encodedShopName = encodeShopName(payload.shopName.replace(' ', '_'))
         messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{payload.orderId}'
         sendMessagesToTopics(
             notification={
@@ -108,12 +108,10 @@ async def completeOrder(payload: Payload.CompleteOrder):
     data = dict(orderData)
     data.pop('isFinished')
     print(data['date'])
-    data['date'] = datetime.fromisoformat(
-        data['date']).astimezone(pytz.utc)
+    data['date'] = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%f%z')
     data['orderId'] = int(payload.orderId)
     data['isCompleted'] = True
     print(data)
-
     fs: firestore.firestore.Client = firestore.client()
     try:
         fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').update({
@@ -129,13 +127,15 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 fs.collection('Orders').document(doc.id).update({
                     'isCompleted': True
                 })
+        encodedShopName = encodeShopName(payload.shopName.replace(" ", "_"))
+        messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{payload.orderId}'
         sendMessagesToTopics(
             notification={
                 'title': 'Your meals have been ready',
                 'body': "Let's go grab your food!"
             }, data={
                 'message': 'completeOrder',
-            }, topic=f'{payload.uid}_{payload.shopName.replace(" ","_")}_{payload.date.replace("/","_")}_{payload.orderId}')
+            }, topic=messageTopic)
         return {
             'status': True
         }
