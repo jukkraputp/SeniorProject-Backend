@@ -43,12 +43,12 @@ def generateOTP():
 
 def encodeShopName(shopName: str):
     encoded = list(shopName.encode('utf-8'))
-    return encoded.__str__().replace('[', '__list__format__1__').replace(']', '__list__format__2__').replace(', ', '__list__format__3__')
+    return encoded.__str__().replace('[', '__listformat1__').replace(']', '__listformat2__').replace(', ', '__listformat3__')
 
 
 def decodeShopName(encodedShopName: str):
     bytesDataStr = encodedShopName.replace(
-        '__list__format__1__', '[').replace('__list__format__2__', ']').replace('__list__format__3__', ', ').strip('][').split(', ')
+        '__listformat1__', '[').replace('__listformat2__', ']').replace('__listformat3__', ', ').strip('][').split(', ')
     bytesDataInt = list(map(int, bytesDataStr))
     bytesData = bytes(bytesDataInt)
     return bytes.decode(bytesData)
