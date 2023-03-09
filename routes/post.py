@@ -47,7 +47,7 @@ async def addOrder(payload: Payload.Order):
             encodedShopName = encodeShopName(
                 payload.shopName.replace(' ', '_'))
             date = datetime.strptime(payload.date, '%Y-%m-%dT%H:%M:%S.%f%z')
-            messageTopic = f'{payload.uid}_{encodedShopName}_{date.year}_{date.month}_{date.day}_{orderId}'
+            messageTopic = f'{payload.ownerUID}_{encodedShopName}_{date.year}_{date.month}_{date.day}_{orderId}'
             return {
                 'status': True,
                 'message': "an order has been added",
@@ -78,7 +78,8 @@ async def finishOrder(payload: Payload.FinishOrder):
                 })
         encodedShopName = encodeShopName(payload.shopName.replace(' ', '_'))
         messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{payload.orderId}'
-        sendMessagesToTopics(
+        print('topic', messageTopic)
+        res = sendMessagesToTopics(
             notification={
                 'title': 'Your meals have been ready',
                 'body': "Let's go grab your food!"
@@ -90,6 +91,7 @@ async def finishOrder(payload: Payload.FinishOrder):
                     'shopName': payload.shopName
                 })
             }, topic=messageTopic)
+        print(res)
     except Exception as e:
         return {
             'status': False,
@@ -136,13 +138,15 @@ async def completeOrder(payload: Payload.CompleteOrder):
                 })
         encodedShopName = encodeShopName(payload.shopName.replace(" ", "_"))
         messageTopic = f'{payload.uid}_{encodedShopName}_{payload.date.replace("/", "_")}_{payload.orderId}'
-        sendMessagesToTopics(
+        print('topic', messageTopic)
+        res = sendMessagesToTopics(
             notification={
                 'title': 'Your meals have been ready',
                 'body': "Let's go grab your food!"
             }, data={
                 'message': 'completeOrder',
             }, topic=messageTopic)
+        print(res)
         return {
             'status': True
         }
