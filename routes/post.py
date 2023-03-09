@@ -124,7 +124,7 @@ async def completeOrder(payload: Payload.CompleteOrder):
         fs.collection(u'History').document(f'{payload.uid}-{payload.shopName}').collection(
             payload.date).add(data)
         ref.delete()
-        docs = fs.collection('Orders').where('shopUID', '==', payload.uid).where('date', '==', payload.date).where(
+        docs = fs.collection('Orders').where('ownerUID', '==', payload.uid).where('date', '==', payload.date).where(
             'orderId', '==', payload.orderId).where('shopName', '==', payload.shopName).get()
         for doc in docs:
             if doc.exists:
